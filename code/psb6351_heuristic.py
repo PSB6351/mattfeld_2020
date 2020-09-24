@@ -21,8 +21,9 @@ def infotodict(seqinfo):
     t1w = create_key('/Users/nbrijmoh/Documents/mattfeld_2020/dset/sub-{subject}/anat/sub-{subject}_T1w')
     dwi = create_key('/Users/nbrijmoh/Documents/mattfeld_2020/dset/sub-{subject}/dwi/sub-{subject}_dwi')
     func = create_key('/Users/nbrijmoh/Documents/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-REVL_rec-{rec}_run-(item:01d)_bold')
+    fimap = create_key('/Users/nbrijmoh/Documents/mattfeld_2020/dset/sub-{subject}/fimap/sub-{subject}_acq-{rec}_dir-{dir}')
     
-    info = {tw: [], dwi: [], func: []}
+    info = {tw: [], dwi: [], func: [], fimap: []}
     last_run = len(seqinfo)
 
     for idx, s in enumerate(seqinfo):
@@ -39,5 +40,14 @@ def infotodict(seqinfo):
                 info[func].append({'item': s.series_id, 'rec': 'Study_3'})
             else
                 info[func].append({'item': s.series_id, 'rec': 'Study_4'})
+        if (s.dim4 == 4) and ('DistortionMap' in s.protocol_name):
+            if ('fMRI' in s.protocol_name) and ('PA' in s.protocol_name):
+                info[fimap].append({'rec': 'func', 'dir': 'PA'})
+            if ('fMRI' in s.protocol_name) and ('AP' in s.protocol_name):
+                info[fimap].append({'rec': 'func', 'dir': 'AP'})
+            if ('dMRI' in s.protocol_name) and ('PA' in s.protocol_name):
+                info[fimap].append({'rec': 'func', 'dir': 'PA'})
+            if ('dMRI' in s.protocol_name) and ('AP' in s.protocol_name):
+                info[fimap].append({'rec': 'func', 'dir': 'AP'})
     return info
 
