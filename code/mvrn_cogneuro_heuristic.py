@@ -18,7 +18,7 @@ def infotodict(seqinfo):
     =========================================================
     """
     #Path to t1* and dwi:
-    #"item" allows us to increment for every file (2 in the case of t1 (Nav & Nav_setter*)
+        #"item" allows us to increment for every file (2 in the case of t1 (Nav & Nav_setter*)
     T1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
     dwi = create_key('sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
     #Paths to Study Tasks:
@@ -26,16 +26,19 @@ def infotodict(seqinfo):
     Study2_task = create_key('sub-{subject}/func/sub-{subject}_task-study2_run-2_bold')
     Study3_task = create_key('sub-{subject}/func/sub-{subject}_task-study3_run-3_bold')
     Study4_task = create_key('sub-{subject}/func/sub-{subject}_task-study4_run-4_bold')
+    #Paths to Localizers (1 and 2):
+    localizer1 = create_key('sub-{subject}/func/sub-{subject}_localizer1_run-1_bold')
+    localizer2 = create_key('sub-{subject}/func/sub-{subject}_localizer2_run-2_bold')
     #Paths to Fieldmaps (functional and dwi):
         #"direct" will specify the AP or PA direction of fieldmaps. The "item" allows us to increment for every fieldmap
         #while specifying the direction. 
     func_fieldmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-func_direction{direct}_run-{item}_fieldmap')
     dwi_fieldmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi_direction{direct}_run-{item}_fieldmap')
     
-    #creating dictionary for our 
+    #creating dictionary
     info = {T1w: [], dwi: [], Study1_task: [], Study2_task: [], 
-                Study3_task: [], Study4_task: [], func_fieldmap: [],
-                dwi_fieldmap: []}
+                Study3_task: [], Study4_task: [], localizer1: [], 
+                localizer2: [], func_fieldmap: [], dwi_fieldmap: []}
     
     #dimension 3 = slice time
     #dimension 4 = time point
@@ -58,6 +61,14 @@ def infotodict(seqinfo):
         elif s.dim4 == 355 and ('fMRI_REVL_Study_4' in s.series_description):
             if not s[13]:
                 info[Study4_task].append(s[2])
+        #the next 2 localizers have the same dim3 and dim4 values
+        #so specifying the series_description is sufficient
+        elif 'fMRI_REVL_ROI_loc_1' in s.series_description:
+            if not s[13]:
+                info[localizer1].append(s[2])
+        elif 'fMRI_REVL_ROI_loc_2' in s.series_description:
+            if not s[13]:
+                info[localizer2].append(s[2])
         elif s.dim4 == 103 and ('dMRI' in s.series_description):
             if not s[13]:
                 info[dwi].append(s[2])
@@ -66,7 +77,7 @@ def infotodict(seqinfo):
         elif "fMRI_DistortionMap_AP" in s.series_description:
                if not s[13]:     
                     #we need to append a dictionary within the main dictionary
-                    #to account for the two string we need to fill in
+                    #to account for the two strings we need to fill in
                     #(i.e., item and direct)
                     info[func_fieldmap].append({"item": s[2], "direct": "AP"})
         elif "fMRI_DistortionMap_PA" in s.series_description:
