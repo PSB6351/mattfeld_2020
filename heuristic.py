@@ -18,13 +18,13 @@ def infotodict(seqinfo):
     subindex: sub index within group
     """
 
-    t1w = create_key('C:/Users/Patricio Viera/Documents/GitHub/mattfeld_2020/dset/sub-{subject}/anat/sub-{subject}_T1w')
-    dwi = create_key('C:/Users/Patricio Viera/Documents/GitHub/mattfeld_2020/dset/sub-{subject}/dwi/sub-{subject}_dwi')
-    func = create_key('C:/Users/Patricio Viera/Documents/GitHub/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-REVL_acq-{rec}_bold')
-    fmap = create_key('C:/Users/Patricio Viera/Documents/GitHub/mattfeld_2020/dset/sub-{subject}/fmap/sub-{subject}_acq-{rec}_dir-{dir}')
-    localize = create_key('C:/Users/Patricio Viera/Documents/GitHub/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-REVL_acq-{rec}_{loc}_bold')
-    info = {t1w: [], dwi: [], func: [], localize: []}
-    last_run = len(seqinfo)
+    t1w = create_key('sub-{subject}/anat/sub-{subject}_T1w')
+    dwi = create_key('sub-{subject}/dwi/sub-{subject}_dwi')
+    func = create_key('sub-{subject}/func/sub-{subject}_task-REVL_acq-{rec}_bold')
+    fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-{rec}_dir-{dir}')
+    localize = create_key('sub-{subject}/func/sub-{subject}_task-REVL_acq-{rec}_{loc}_bold')
+
+    info = {t1w: [], dwi: [], func: [], fmap: [], localize: []}
 
     for idx, s in enumerate(seqinfo):
         if (s.dim1 == 256) and (s.dim2 == 256) and (s.dim3 == 176) and (s.dim4 == 1) and ('T1w' in s.protocol_name):
@@ -52,7 +52,7 @@ def infotodict(seqinfo):
         if (s.dim1 == 100) and (s.dim2 == 100) and (s.dim3 == 66) and (s.dim4 == 304) and ('ROI' in s.protocol_name):
             if ("_loc_1" in s.protocol_name):
                 info[localize].append({'rec': 'localizer', 'loc': 'loc_1'})
-            else
+            else:
                 info[localize].append({'rec': 'localizer', 'loc': 'loc_2'})
 
     return info
