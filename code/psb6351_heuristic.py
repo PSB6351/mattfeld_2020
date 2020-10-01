@@ -1,4 +1,4 @@
-# Convert DICOMs to BIDS-compatible dataset
+# {item} # Convert DICOMs to BIDS-compatible dataset
 
 import os
 
@@ -26,44 +26,44 @@ def infotodict(seqinfo):
     bids_subject_session_prefix: BIDS subject/session prefix
     """
 
-
+# https://neuroimaging-core-docs.readthedocs.io/en/lastest/pages/heudiconv.htmal tutorial
 
 # There is no definition of "subject" and "item" so I have no idea how "item" to be run in this file..(also {dir})
-# I know there is only one subject 021, so I put this number to this script
+# I know there is only one subject {subject}, so I put this number to this script
 
 # paths done in BIDS format
 # data = create_key('run{item:03d}')
 
     # T1-weighted and Diffusion-weighted MRI
-        # t1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
-        # dwi = create_key('sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
+        # t1w = create_key('sub-{subject}/ses-S1/anat/sub-{subject}_run-{item}_T1w')
+        # dwi = create_key('sub-{subject}/ses-S1/dwi/sub-{subject}_run-{item}_dwi')
 
     # ROI Localization
-        # loc1_task = create_key('sub-{subject}/func/sub-{subject}_task-loc_run-1_bold')
-        # loc2_task = create_key('sub-{subject}/func/sub-{subject}_task-loc_run-2_bold')
+        # loc1_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-loc_run-1_bold')
+        # loc2_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-loc_run-2_bold')
 
     # Study task
-        # study1_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-1_bold')
-        # study2_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-2_bold')
-        # study3_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-3_bold')
-        # study4_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-4_bold')
+        # study1_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-study_run-1_bold')
+        # study2_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-study_run-2_bold')
+        # study3_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-study_run-3_bold')
+        # study4_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_task-study_run-4_bold')
 
     # Fieldmaps of functional and dwi:
     # Direction({dir}) specifies the AP or PA direction of fieldmaps.
-        # task_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-func_dir-{dir}_run{item}_epi')
-        # dwi_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi_dir-{dir}_run{item}_epi')
+        # task_fmap = create_key('sub-{subject}/ses-S1/fmap/sub-{subject}_acq-func_dir-{dir}_run{item}_epi')
+        # dwi_fmap = create_key('sub-{subject}/ses-S1/fmap/sub-{subject}_acq-dwi_dir-{dir}_run{item}_epi')
 
 
-    t1w = create_key('sub-021/anat/sub-021_run-{item}_T1w')
-    dwi = create_key('sub-021/dwi/sub-021_run-{item}_dwi')
-    loc1_task = create_key('sub-021/func/sub-021_task-loc_run-1_bold')
-    loc2_task = create_key('sub-021/func/sub-021_task-loc_run-2_bold')
-    study1_task = create_key('sub-021/func/sub-021_task-study_run-1_bold')
-    study2_task = create_key('sub-021/func/sub-021_task-study_run-2_bold')
-    study3_task = create_key('sub-021/func/sub-021_task-study_run-3_bold')
-    study4_task = create_key('sub-021/func/sub-021_task-study_run-4_bold')
-    task_fmap = create_key('sub-021/fmap/sub-021_acq-func_dir-{dir}_run{item}_epi')
-    dwi_fmap = create_key('sub-021/fmap/sub-021_acq-dwi_dir-{dir}_run{item}_epi')
+    t1w = create_key('sub-{subject}/ses-S1/anat/sub-{subject}_ses-S1_run-{item}_T1w')
+    dwi = create_key('sub-{subject}/ses-S1/dwi/sub-{subject}_ses-S1_run-{item}_dwi')
+    loc1_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-loc_{item}_bold')
+    loc2_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-loc_{item}_bold')
+    study1_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-study_{item}_bold')
+    study2_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-study_{item}_bold')
+    study3_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-study_{item}_bold')
+    study4_task = create_key('sub-{subject}/ses-S1/func/sub-{subject}_ses-S1_task-study_{item}_bold')
+    task_fmap = create_key('sub-{subject}/ses-S1/fmap/sub-{subject}_ses-S1_acq-func_dir-{dir}_run{item}_epi')
+    dwi_fmap = create_key('sub-{subject}/ses-S1/fmap/sub-{subject}_ses-S1_acq-dwi_dir-{dir}_run{item}_epi')
 
 
 
@@ -73,7 +73,7 @@ def infotodict(seqinfo):
             study1_task: [], study2_task: [], study3_task: [], study4_task: [],
             task_fmap: [], dwi_fmap: []}
 
-    last_run = len(seqinfo)
+    # last_run = len(seqinfo)
 
 
 
@@ -85,9 +85,9 @@ def infotodict(seqinfo):
         """
         The namedtuple `s` contains the following fields:
 
-        * total_files_till_now
-        * example_dcm_file
-        * series_id
+        * total_files_till_now = s[0]
+        * example_dcm_file = s[1]
+        * series_id = s[2]...
         * dcm_dir_name
         * unspecified2
         * unspecified3
@@ -107,7 +107,7 @@ def infotodict(seqinfo):
         * image_type
         """
 
-# info[data].append(s.series_id)
+# info[data].append({"item": s.series_id})
 # append() -> add a single item to the end of the existing list
 
     # T1-weighted and Diffusion-weighted MRI
@@ -146,29 +146,29 @@ def infotodict(seqinfo):
         #     pass
 
         if (s.dim3 == 176) and (s.dim4 == 1) and ("T1w_MPR_vNav" in s.series_description):
-            info[t1w].append(s.series_id)
+            info[t1w].append({"item": s.series_id})
         elif (s.dim3 > 1) and (s.dim4 == 103) and ("dMRI_AP_REVL" in s.series_description):
-            info[dwi].append(s.series_id)
+            info[dwi].append({"item": s.series_id})
         elif (s.dim4 == 304) and ("fMRI_REVL_ROI_loc_1" in s.series_description):
-            info[loc1_task].append(s.series_id)
+            info[loc1_task].append({"item": s.series_id})
         elif (s.dim4 == 304) and ("fMRI_REVL_ROI_loc_2" in s.series_description):
-            info[loc2_task].append(s.series_id)
+            info[loc2_task].append({"item": s.series_id})
         elif (s.dim4 == 355) and ("fMRI_REVL_Study_1" in s.series_description):
-            info[study1_task].append(s.series_id)
+            info[study1_task].append({"item": s.series_id})
         elif (s.dim4 == 355) and ("fMRI_REVL_Study_2" in s.series_description):
-            info[study2_task].append(s.series_id)
+            info[study2_task].append({"item": s.series_id})
         elif (s.dim4 == 355) and ("fMRI_REVL_Study_3" in s.series_description):
-            info[study3_task].append(s.series_id)
+            info[study3_task].append({"item": s.series_id})
         elif (s.dim4 == 355) and ("fMRI_REVL_Study_4" in s.series_description):
-            info[study4_task].append(s.series_id)
+            info[study4_task].append({"item": s.series_id})
         elif "dMRI_DistortionMap_AP_dMRI_REVL" in s.series_description:
-            info[dwi_fmap].append({"item": s.series_id, "dir": "AP"})
+            info[dwi_fmap].append({"dir": "AP", "item": s.series_id})
         elif "dMRI_DistortionMap_PA_dMRI_REVL" in s.series_description:
-            info[dwi_fmap].append({"item": s.series_id, "dir": "PA"})
+            info[dwi_fmap].append({"dir": "PA", "item": s.series_id})
         elif "fMRI_DistortionMap_PA" in s.series_description:
-            info[task_fmap].append({"item": s.series_id, "dir": "PA"})
+            info[task_fmap].append({"dir": "PA", "item": s.series_id})
         elif "fMRI_DistortionMap_AP" in s.series_description:
-            info[task_fmap].append({"item": s.series_id, "dir": "AP"})
+            info[task_fmap].append({"dir": "AP", "item": s.series_id})
         else:
             pass
 
