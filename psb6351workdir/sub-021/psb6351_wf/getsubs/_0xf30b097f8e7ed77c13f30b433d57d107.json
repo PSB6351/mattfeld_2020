@@ -1,0 +1,33 @@
+[
+    [
+        "func_files",
+        [
+            [
+                "/scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-1_bold.nii.gz",
+                "4a6cd06a630e56e1634bc47bc2760637"
+            ],
+            [
+                "/scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-2_bold.nii.gz",
+                "b0f84cf08ea51b6e8350cb52c5054405"
+            ],
+            [
+                "/scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-3_bold.nii.gz",
+                "587922078b36fde6d80531960556ab0d"
+            ],
+            [
+                "/scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-4_bold.nii.gz",
+                "82c70c71b591a3cba1fcdef9bdd7f010"
+            ]
+        ]
+    ],
+    [
+        "function_str",
+        "def get_subs(func_files):\n    '''Produces Name Substitutions for Each Contrast'''\n    subs = []\n    for curr_run in range(len(func_files)):\n        subs.append(('_tshifter%d' %curr_run, ''))\n        subs.append(('_volreg%d' %curr_run, ''))\n    return subs\n"
+    ],
+    [
+        "needed_outputs",
+        [
+            "subs"
+        ]
+    ]
+]

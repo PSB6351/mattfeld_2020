@@ -1,0 +1,19 @@
+[
+    [
+        "function_str",
+        "def best_vol(outlier_count):\n    best_vol_num = outlier_count.index(min(outlier_count[:200]))\n    if isinstance(best_vol_num, list):\n        best_vol_num = best_vol_num[0]\n    return best_vol_num\n"
+    ],
+    [
+        "outlier_count",
+        [
+            "/scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/id_outliers/outlier_file",
+            "0ecedea1b8f4760018fbddcdea4a5a60"
+        ]
+    ],
+    [
+        "needed_outputs",
+        [
+            "best_vol_num"
+        ]
+    ]
+]
