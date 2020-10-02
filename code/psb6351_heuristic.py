@@ -18,16 +18,16 @@ def infotodict(seqinfo):
     subindex: sub index within group
     """
 
-    t1w = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
-    dwi = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
-    loc1_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-loc_run-1_bold')
-    loc2_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-loc_run-2_bold')
-    study1_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-study_run-1_bold')
-    study2_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-study_run-2_bold')
-    study3_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-study_run-3_bold')
-    study4_task = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/func/sub-{subject}_task-study_run-4_bold')
-    task_fmap = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/fmap/sub-{subject}_acq-func_dir-{dir}_run-{item}_epi')
-    dwi_fmap = create_key('C:/Users/benji/OneDrive/Documentos/mattfeld_2020/dset/sub-{subject}/fmap/sub-{subject}_acq-dwi_dir-{dir}_run-{item}_epi')
+    t1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
+    dwi = create_key('sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
+    loc1_task = create_key('sub-{subject}/func/sub-{subject}_task-loc_run-1_bold')
+    loc2_task = create_key('sub-{subject}/func/sub-{subject}_task-loc_run-2_bold')
+    study1_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-1_bold')
+    study2_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-2_bold')
+    study3_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-3_bold')
+    study4_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-4_bold')
+    task_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-func_dir-{dir}_run-{item}_epi')
+    dwi_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi_dir-{dir}_run-{item}_epi')
     
     info = {t1w: [], 
             dwi: [], 
