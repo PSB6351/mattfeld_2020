@@ -19,7 +19,6 @@ def infotodict(seqinfo):
     bids_subject_session_prefix: BIDS subject/session prefix
     """
 
-HEAD
 
     t1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
     dwi = create_key('sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
@@ -73,5 +72,8 @@ HEAD
             info[task_fmap].append({"item": s[2], "dir": "AP"})
         else:
             pass
-e611fba1650ba479e199cb1c0519dc3382bbc1d1
     return info
+
+        
+
+  
