@@ -17,8 +17,8 @@
 #SBATCH --partition centos7_16C_48G
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/pvier002/mattfeld_2020/crash/preproc_o
+#SBATCH -e /scratch/pvier002/mattfeld_2020/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -60,8 +60,8 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351'
+base_dir = '/scratch/pvier002/mattfeld_2020'
+work_dir = '/scratch/pvier002'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
@@ -175,7 +175,7 @@ distor_corr.inputs.in_file = func_files
 # You pass the output from the previous node...in this case calc_distor_corr
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
+#psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching

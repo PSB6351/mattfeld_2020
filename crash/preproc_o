@@ -1,0 +1,150 @@
+201008-20:08:44,759 nipype.workflow INFO:
+	 Workflow psb6351_wf settings: ['check', 'execution', 'logging', 'monitoring']
+201008-20:08:44,827 nipype.workflow INFO:
+	 Running in parallel.
+201008-20:08:44,893 nipype.workflow INFO:
+	 Pending[0] Submitting[3] jobs Slots[inf]
+201008-20:08:44,893 nipype.workflow INFO:
+	 Submitting: psb6351_wf.getsubs ID: 0
+201008-20:08:45,154 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.getsubs ID: 0
+201008-20:08:45,156 nipype.workflow INFO:
+	 Submitting: psb6351_wf.calc_distor_corr ID: 1
+201008-20:08:45,352 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.calc_distor_corr ID: 1
+201008-20:08:45,353 nipype.workflow INFO:
+	 Submitting: psb6351_wf.id_outliers ID: 2
+201008-20:08:45,548 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.id_outliers ID: 2
+201008-20:09:17,124 nipype.workflow INFO:
+	 [Job 0] Completed (psb6351_wf.getsubs).
+201008-20:09:23,300 nipype.workflow INFO:
+	 [Job 2] Completed (psb6351_wf.id_outliers).
+201008-20:09:23,304 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201008-20:09:23,304 nipype.workflow INFO:
+	 Submitting: psb6351_wf.getbestvol ID: 3
+201008-20:09:23,504 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.getbestvol ID: 3
+201008-20:09:41,228 nipype.workflow INFO:
+	 [Job 3] Completed (psb6351_wf.getbestvol).
+201008-20:09:41,231 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201008-20:09:41,231 nipype.workflow INFO:
+	 Submitting: psb6351_wf.extractref ID: 4
+201008-20:09:41,400 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.extractref ID: 4
+201008-20:10:17,358 nipype.workflow INFO:
+	 [Job 4] Completed (psb6351_wf.extractref).
+201008-20:10:17,364 nipype.workflow INFO:
+	 Pending[1] Submitting[2] jobs Slots[inf]
+201008-20:10:17,364 nipype.workflow INFO:
+	 Submitting: psb6351_wf.fs_register ID: 5
+201008-20:10:17,572 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.fs_register ID: 5
+201008-20:10:17,593 nipype.workflow INFO:
+	 Pending[2] Submitting[6] jobs Slots[inf]
+201008-20:10:17,593 nipype.workflow INFO:
+	 Submitting: _volreg0 ID: 9
+201008-20:10:17,798 nipype.workflow INFO:
+	 Finished submitting: _volreg0 ID: 9
+201008-20:10:17,798 nipype.workflow INFO:
+	 Submitting: _volreg1 ID: 10
+201008-20:10:17,981 nipype.workflow INFO:
+	 Finished submitting: _volreg1 ID: 10
+201008-20:10:17,981 nipype.workflow INFO:
+	 Submitting: _volreg2 ID: 11
+201008-20:10:18,136 nipype.workflow INFO:
+	 Finished submitting: _volreg2 ID: 11
+201008-20:10:18,136 nipype.workflow INFO:
+	 Submitting: _volreg3 ID: 12
+201008-20:10:18,293 nipype.workflow INFO:
+	 Finished submitting: _volreg3 ID: 12
+201008-20:10:18,293 nipype.workflow INFO:
+	 Submitting: _volreg4 ID: 13
+201008-20:10:18,451 nipype.workflow INFO:
+	 Finished submitting: _volreg4 ID: 13
+201008-20:10:18,451 nipype.workflow INFO:
+	 Submitting: _volreg5 ID: 14
+201008-20:10:18,606 nipype.workflow INFO:
+	 Finished submitting: _volreg5 ID: 14
+201008-20:11:53,412 nipype.workflow INFO:
+	 [Job 5] Completed (psb6351_wf.fs_register).
+201008-20:12:23,420 nipype.workflow INFO:
+	 [Job 9] Completed (_volreg0).
+201008-20:12:45,437 nipype.workflow INFO:
+	 [Job 10] Completed (_volreg1).
+201008-20:13:13,614 nipype.workflow INFO:
+	 [Job 12] Completed (_volreg3).
+201008-20:13:15,451 nipype.workflow INFO:
+	 [Job 11] Completed (_volreg2).
+201008-20:13:21,626 nipype.workflow INFO:
+	 [Job 14] Completed (_volreg5).
+201008-20:13:27,465 nipype.workflow INFO:
+	 [Job 13] Completed (_volreg4).
+201008-20:13:27,468 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201008-20:13:27,471 nipype.workflow INFO:
+	 Submitting: psb6351_wf.volreg ID: 6
+201008-20:13:27,680 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.volreg ID: 6
+201008-20:13:41,455 nipype.workflow INFO:
+	 [Job 6] Completed (psb6351_wf.volreg).
+201008-20:13:41,459 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201008-20:13:41,498 nipype.workflow INFO:
+	 Pending[1] Submitting[6] jobs Slots[inf]
+201008-20:13:41,498 nipype.workflow INFO:
+	 Submitting: _tshifter0 ID: 15
+201008-20:13:41,694 nipype.workflow INFO:
+	 Finished submitting: _tshifter0 ID: 15
+201008-20:13:41,695 nipype.workflow INFO:
+	 Submitting: _tshifter1 ID: 16
+201008-20:13:41,893 nipype.workflow INFO:
+	 Finished submitting: _tshifter1 ID: 16
+201008-20:13:41,893 nipype.workflow INFO:
+	 Submitting: _tshifter2 ID: 17
+201008-20:13:42,45 nipype.workflow INFO:
+	 Finished submitting: _tshifter2 ID: 17
+201008-20:13:42,45 nipype.workflow INFO:
+	 Submitting: _tshifter3 ID: 18
+201008-20:13:42,194 nipype.workflow INFO:
+	 Finished submitting: _tshifter3 ID: 18
+201008-20:13:42,194 nipype.workflow INFO:
+	 Submitting: _tshifter4 ID: 19
+201008-20:13:42,342 nipype.workflow INFO:
+	 Finished submitting: _tshifter4 ID: 19
+201008-20:13:42,342 nipype.workflow INFO:
+	 Submitting: _tshifter5 ID: 20
+201008-20:13:42,489 nipype.workflow INFO:
+	 Finished submitting: _tshifter5 ID: 20
+201008-20:15:09,510 nipype.workflow INFO:
+	 [Job 15] Completed (_tshifter0).
+201008-20:15:09,711 nipype.workflow INFO:
+	 [Job 16] Completed (_tshifter1).
+201008-20:15:17,510 nipype.workflow INFO:
+	 [Job 17] Completed (_tshifter2).
+201008-20:15:17,712 nipype.workflow INFO:
+	 [Job 18] Completed (_tshifter3).
+201008-20:15:17,911 nipype.workflow INFO:
+	 [Job 19] Completed (_tshifter4).
+201008-20:15:18,107 nipype.workflow INFO:
+	 [Job 20] Completed (_tshifter5).
+201008-20:15:18,110 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201008-20:15:18,114 nipype.workflow INFO:
+	 Submitting: psb6351_wf.tshifter ID: 7
+201008-20:15:18,319 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.tshifter ID: 7
+201008-20:15:43,521 nipype.workflow INFO:
+	 [Job 7] Completed (psb6351_wf.tshifter).
+201008-20:27:30,54 nipype.workflow INFO:
+	 [Job 1] Completed (psb6351_wf.calc_distor_corr).
+201008-20:27:30,61 nipype.workflow INFO:
+	 Pending[0] Submitting[1] jobs Slots[inf]
+201008-20:27:30,61 nipype.workflow INFO:
+	 Submitting: psb6351_wf.datasink ID: 8
+201008-20:27:30,266 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.datasink ID: 8
+201008-20:27:46,69 nipype.workflow INFO:
+	 [Job 8] Completed (psb6351_wf.datasink).
