@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # The line at the very top tells the cpu that will be excuting this job
-# which python to use and how to find it.
+# which python to use and how to find it
 # Without that line this sould just be a simple text file and you would
 # specifically need to type on the command line: python name_of_file.py
 
