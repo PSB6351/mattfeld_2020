@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/bin/env python
 
 # The line at the very top tells the cpu that will be excuting this job
 # which python to use and how to find it.
@@ -17,8 +17,8 @@
 #SBATCH --partition centos7_16C_48G
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/bsuth005/crash/preproc_o
+#SBATCH -e /scratch/bsuth005/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -60,8 +60,8 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351'
+base_dir = '/home/bsuth005/psb6351_github/mattfeld_2020'
+work_dir = '/scratch/bsuth005'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
