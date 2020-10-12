@@ -14,11 +14,11 @@
 # The directory where these files are written must be created before otherwise
 # you won't have access to the output and error text files.
 
-#SBATCH --partition centos7_16C_48G
+#SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/nbrij001/PSB6351/crash/preproc_o
+#SBATCH -e /scratch/nbrij001/PSB6351/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -60,8 +60,8 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351'
+base_dir = '/home/nbrij001/psb6351_github/mattfeld_2020'
+work_dir = '/scratch/nbrij001/PSB6351'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
@@ -125,7 +125,7 @@ for curr_json in func_json: # Here I am iterating over the variable func_json th
 # Code here become less python specific and more nipype specific.  They share similarites
 # but have some unique pecularities to take note.
 psb6351_wf = pe.Workflow(name='psb6351_wf') # First I create a workflow...this will serve as the backbone of the pipeline
-psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sid[0]}' # I deinfe the working directory where I want preliminary files to be written
+psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sids[0]}' # I deinfe the working directory where I want preliminary files to be written
 psb6351_wf.config['execution']['use_relative_paths'] = True # I assign a execution variable to use relative paths...TRYING TO USE THIS TO FIX A BUG?
 
 # Create a Function node to substitute names of files created during pipeline
@@ -229,7 +229,7 @@ fs_register = pe.Node(fs.BBRegister(init='fsl'),
                       name ='fs_register')
 fs_register.inputs.contrast_type = 't2'
 fs_register.inputs.out_fsl_file = True
-fs_register.inputs.subject_id = f'sub-{sid[0]}'
+fs_register.inputs.subject_id = f'sub-{sids[0]}'
 fs_register.inputs.subjects_dir = fs_dir
 psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
@@ -239,7 +239,7 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 # function to get rid of nesting
 datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
-datasink.inputs.container = f'sub-{sid[0]}'
+datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
@@ -254,6 +254,6 @@ psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 # The following two lines set a work directory outside of my 
 # local git repo and runs the workflow
 psb6351_wf.run(plugin='SLURM',
-               plugin_args={'sbatch_args': ('--partition centos7_IB_44C_512G --qos pq_psb6351 --account acc_psb6351'),
+               plugin_args={'sbatch_args': ('--partition centos7_default-partition --qos pq_psb6351 --account acc_psb6351'),
                             'overwrite':True})
 
