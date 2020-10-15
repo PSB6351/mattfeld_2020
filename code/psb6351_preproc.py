@@ -60,6 +60,7 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
+
 base_dir = '/home/nbrij001/psb6351_github/mattfeld_2020'
 work_dir = '/scratch/nbrij001/PSB6351'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
@@ -233,6 +234,29 @@ fs_register.inputs.subject_id = f'sub-{sids[0]}'
 fs_register.inputs.subjects_dir = fs_dir
 psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
+# Add a mapnode to spatially blur the data
+# save the outputs to the datasink
+Blur = pe.MapNode(afni.BlurToFWHM(),
+		    iterfield=['in_file'],
+		    name = 'Blur')
+#Blur.inputs.in_file = func_files #not needed?
+Blur.inputs.fwhm = 3 #smoothing width in mm
+Blur.inputs.automask = True
+Blur.inputs.num_threads = 2 
+Blur.inputs.outputtype = 'NIFTI_GZ' 
+psb6351_wf.connect(tshifter, 'out_file', Blur, 'in_file')
+
+# Added a mapnode to do temporal smoothing
+# Saving the outputs to the datasink 
+temp_smooth = pe.MapNode(afni.TSmooth(),
+			 iterfield=['in_file'],
+			 name = 'temp_smooth')
+temp_smooth.inputs.adaptive = 5
+temp_smooth.inputs.lin = True
+temp_smooth.inputs.med = True
+temp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(Blur, 'out_file', temp_smooth, 'in_file')
+
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
 # I use the substitutions input combined with the earlier
@@ -241,6 +265,8 @@ datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
+psb6351_wf.connect(Blur, 'out_file', datasink, 'Spatial_Blur')
+psb6351_wf.connect(temp_smooth, 'out_file', datasink, 'TSmooth')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
@@ -250,6 +276,7 @@ psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
+
 
 # The following two lines set a work directory outside of my 
 # local git repo and runs the workflow
