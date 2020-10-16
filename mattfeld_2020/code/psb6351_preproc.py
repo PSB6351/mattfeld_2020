@@ -12,7 +12,7 @@
 # error and output text files.  These are useful when debugging code.  They
 # Are simple text files that cat be viewed with the commands cat or less.
 # The directory where these files are written must be created before otherwise
-# you won't have access to the output and error text files.
+# you won't have access to the output and error text files. 
 
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
