@@ -14,11 +14,11 @@
 # The directory where these files are written must be created before otherwise
 # you won't have access to the output and error text files.
 
-#SBATCH --partition centos7_16C_48G
+#SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/pvier002/mattfeld_2020/crash/preproc_o
+#SBATCH -e /scratch/pvier002/mattfeld_2020/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -60,8 +60,8 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351'
+base_dir = '/scratch/pvier002/mattfeld_2020'
+work_dir = '/scratch/pvier002'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
@@ -150,10 +150,12 @@ id_outliers = pe.Node(afni.OutlierCount(),
                       name = 'id_outliers')
 id_outliers.inputs.in_file = func_files[0]
 id_outliers.inputs.automask = True
+id_outliers.inputs.interval = True
+id_outliers.inputs.legendre = True
 id_outliers.inputs.out_file = 'outlier_file'
 
 #ATM ONLY: Add an unwarping mapnode here using the field maps
-calc_distor_corr = pe.Node(afni.Qwarp(),
+'''calc_distor_corr = pe.Node(afni.Qwarp(),
                            name = 'calc_distor_corr')
 calc_distor_corr.inputs.plusminus = True
 calc_distor_corr.inputs.pblur = [0.05, 0.05]
@@ -175,7 +177,7 @@ distor_corr.inputs.in_file = func_files
 # You pass the output from the previous node...in this case calc_distor_corr
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
+psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
@@ -206,7 +208,9 @@ volreg = pe.MapNode(afni.Volreg(),
                     iterfield=['in_file'],
                     name = 'volreg')
 volreg.inputs.outputtype = 'NIFTI_GZ'
-volreg.inputs.zpad = 4
+volreg.inputs.zpad = 8
+volreg.inputs.interp = 'Fourier'
+volreg.inputs.num_threads = 2
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
 
@@ -220,6 +224,8 @@ tshifter = pe.MapNode(afni.TShift(),
                       name = 'tshifter')
 tshifter.inputs.tr = '1.76'
 tshifter.inputs.slice_timing = slice_timing_list
+tshifter.inputs.interp = 'Fourier'
+tshifter.inputs.rltplus = True
 tshifter.inputs.outputtype = 'NIFTI_GZ'
 psb6351_wf.connect(volreg, 'out_file', tshifter, 'in_file')
 
@@ -233,9 +239,25 @@ fs_register.inputs.subject_id = f'sub-{sids[0]}'
 fs_register.inputs.subjects_dir = fs_dir
 psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
-# Add a mapnode to spatially blur the data
+# Add a mapnode to spatially blur the data - Isotropic smoothing kernel 
 # save the outputs to the datasink
+##### Conducting spatial blurring on corrected data ###### 
+sp_blur = pe.MapNode(afni.BlurToFWHM(),
+                     iterfield=['in_file'],
+                     name= 'sp_blur')
+sp_blur.inputs.fwhm = 2.5
+sp_blur.inputs.automask = True
+sp_blur.inputs.outputtype = 'NIFTI_GZ'                     
+psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
 
+#### Conducting temporal Smoothing on the spatially blurred data #####
+tmp_smooth = pe.MapNode(afni.TSmooth(),
+                        iterfield=['in_file'],
+                        name = 'tmp_smooth')
+tmp_smooth.inputs.adaptive = 5
+tmp_smooth.inputs.osf = True
+tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -245,8 +267,10 @@ datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
+psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_blurring')
+psb6351_wf.connect(tmp_smooth, 'out_file', datasink, 'temporal_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
+#psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')

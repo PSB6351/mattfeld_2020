@@ -1,2 +1,0 @@
-3dTshift -Fourier -prefix sub-021_task-study_run-1_bold_volreg_tshift.nii.gz -tpattern @slice_timing.1D -TR 1.76 /scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/tshifter/mapflow/_tshifter0/sub-021_task-study_run-1_bold_volreg.nii.gz
-

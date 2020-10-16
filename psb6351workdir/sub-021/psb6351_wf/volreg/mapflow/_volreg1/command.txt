@@ -1,2 +1,0 @@
-3dvolreg -Fourier -1Dfile sub-021_task-study_run-2_bold.1D -1Dmatrix_save sub-021_task-study_run-2_bold.aff12.1D -prefix sub-021_task-study_run-2_bold_volreg.nii.gz -base /scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/extractref/sub-021_task-study_run-1_bold_roi.nii.gz -zpad 4 -maxdisp1D sub-021_task-study_run-2_bold_md.1D /scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/volreg/mapflow/_volreg1/sub-021_task-study_run-2_bold.nii.gz
-
