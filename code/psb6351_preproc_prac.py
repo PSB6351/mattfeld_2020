@@ -324,6 +324,7 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 # save the outputs to the datasink
 #######################################################################################
 
+#spatial smoothing
 #3dblurtoFWHM -> Blurring will occur only within the mask. Voxels NOT in the mask will be set to zero in the output
 #For each run, blur each volume by a $fwhm mm FWHM (Full Width at Half Max) Gaussian kernel
 #Got some related information at https://andysbrainbook.readthedocs.io/en/latest/AFNI/AFNI_Short_Course/AFNI_Preprocessing/05_AFNI_Smoothing.html
@@ -337,6 +338,7 @@ blurring.inputs.outputtype = 'NIFTI_GZ' # AFNI outputtype
 
 psb6351_wf.connect(tshifter, 'out_file', blurring, 'in_file')
 
+#temporal smoothing
 #3dTsmooth -> Smooth each voxel time series in a 3d+time dataset and produces as output a new 3d+time dataset(e.g., lowpass filter in time)
 tsmooth = pe.MapNode(afni.TSmooth(),
                           iterfield=['in_file'],
