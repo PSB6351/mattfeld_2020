@@ -17,8 +17,8 @@
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_o
+#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -44,6 +44,7 @@ import nibabel as nb
 import json
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe 
+import nipype.interfaces.utility as util
 
 # Below I am assigning a list with one string element to the variable named sid
 # I do this because I want to iterate over subject ids (aka., sids) and I want 
@@ -61,7 +62,7 @@ sids = ['021']
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
 base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351_today'
+work_dir = '/scratch/madlab/Mattfeld_PSB6351/ATM'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
@@ -99,7 +100,22 @@ def get_subs(func_files):
     for curr_run in range(len(func_files)):
         subs.append(('_tshifter%d' %curr_run, ''))
         subs.append(('_volreg%d' %curr_run, ''))
+        subs.append(('_smooth%d' %curr_run, ''))
     return subs
+
+def getbtthresh(medianvals):
+    """Get the brightness threshold for SUSAN."""
+    return [0.75*val for val in medianvals]
+
+def getusans(inlist):
+    """Return the usans at the right threshold."""
+    return [[tuple([val[0],0.75*val[1]])] for val in inlist]
+
+def get_aparc_aseg(files):
+    for name in files:
+        if 'aparc+aseg' in name:
+            return name
+    raise ValueError('aparc+aseg.mgz not found')
 
 # Here I am building a function that takes in a
 # text file that includes the number of outliers
@@ -150,8 +166,12 @@ id_outliers = pe.Node(afni.OutlierCount(),
                       name = 'id_outliers')
 id_outliers.inputs.in_file = func_files[0]
 id_outliers.inputs.automask = True
+id_outliers.inputs.legendre = True
+id_outliers.inputs.polort = 4
 id_outliers.inputs.out_file = 'outlier_file'
 
+'''
+CURRENTLY CRASHING COMMENTING OUT TO WORK ON LATER
 #ATM ONLY: Add an unwarping mapnode here using the field maps
 calc_distor_corr = pe.Node(afni.Qwarp(),
                            name = 'calc_distor_corr')
@@ -176,6 +196,7 @@ distor_corr.inputs.in_file = func_files
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
 psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
+'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
@@ -236,23 +257,84 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 # Add a mapnode to spatially blur the data
 # save the outputs to the datasink
 
+# Register a source file to fs space and create a brain mask in source space
+# The node below creates the Freesurfer source
+fssource = pe.Node(nio.FreeSurferSource(),
+                   name ='fssource')
+fssource.inputs.subject_id = f'sub-{sids[0]}'
+fssource.inputs.subjects_dir = fs_dir
+
+# Extract aparc+aseg brain mask, binarize, and dilate by 1 voxel
+fs_threshold = pe.Node(fs.Binarize(min=0.5, out_type='nii'),
+                       name ='fs_threshold')
+fs_threshold.inputs.dilate = 1
+psb6351_wf.connect(fssource, ('aparc_aseg', get_aparc_aseg), fs_threshold, 'in_file')
+
+# Transform the binarized aparc+aseg file to the EPI space
+# use a nearest neighbor interpolation
+fs_voltransform = pe.Node(fs.ApplyVolTransform(inverse=True),
+                          name='fs_transform')
+fs_voltransform.inputs.subjects_dir = fs_dir
+fs_voltransform.inputs.interp = 'nearest'
+psb6351_wf.connect(extractref, 'roi_file', fs_voltransform, 'source_file')
+psb6351_wf.connect(fs_register, 'out_reg_file', fs_voltransform, 'reg_file')
+psb6351_wf.connect(fs_threshold, 'binary_file', fs_voltransform, 'target_file')
+
+# Mask the functional runs with the extracted mask
+maskfunc = pe.MapNode(fsl.ImageMaths(suffix='_bet',
+                                     op_string='-mas'),
+                      iterfield=['in_file'],
+                      name = 'maskfunc')
+psb6351_wf.connect(tshifter, 'out_file', maskfunc, 'in_file')
+psb6351_wf.connect(fs_voltransform, 'transformed_file', maskfunc, 'in_file2')
+
+# Smooth each run using SUSAn with the brightness threshold set to 75%
+# of the median value for each run and a mask constituting the mean functional
+smooth_median = pe.MapNode(fsl.ImageStats(op_string='-k %s -p 50'),
+                           iterfield = ['in_file'],
+                           name='smooth_median')
+psb6351_wf.connect(maskfunc, 'out_file', smooth_median, 'in_file')
+psb6351_wf.connect(fs_voltransform, 'transformed_file', smooth_median, 'mask_file')
+
+# Calculate the mean functional
+smooth_meanfunc = pe.MapNode(fsl.ImageMaths(op_string='-Tmean',
+                                            suffix='_mean'),
+                             iterfield=['in_file'],
+                             name='smooth_meanfunc')
+psb6351_wf.connect(maskfunc, 'out_file', smooth_meanfunc, 'in_file')
+
+smooth_merge = pe.Node(util.Merge(2, axis='hstack'),
+                       name='smooth_merge')
+psb6351_wf.connect(smooth_meanfunc, 'out_file', smooth_merge, 'in1')
+psb6351_wf.connect(smooth_median, 'out_stat', smooth_merge, 'in2')
+
+# Below is the code for smoothing using the susan algorithm from FSL that
+# limits smoothing based on different tissue classes
+smooth = pe.MapNode(fsl.SUSAN(),
+                    iterfield=['in_file', 'brightness_threshold', 'usans', 'fwhm'],
+                    name='smooth')
+smooth.inputs.fwhm=[2.0, 4.0, 6.0, 8.0, 10.0, 12.0]
+psb6351_wf.connect(maskfunc, 'out_file', smooth, 'in_file')
+psb6351_wf.connect(smooth_median, ('out_stat', getbtthresh), smooth, 'brightness_threshold')
+psb6351_wf.connect(smooth_merge, ('out', getusans), smooth, 'usans')
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
 # I use the substitutions input combined with the earlier
 # function to get rid of nesting
 datasink = pe.Node(nio.DataSink(), name="datasink")
-datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc1')
+datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
+#psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
+psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 
 # The following two lines set a work directory outside of my 
