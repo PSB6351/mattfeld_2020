@@ -251,7 +251,7 @@ spatblur = pe.MapNode(afni.BlurToFWHM(),
                       iterfield=['in_file'],
                       name = 'spatblur')
 spatblur.inputs.outputtype = 'NIFTI_GZ'
-spatblur.inputs.fwhm = 100.0 #must be a float
+spatblur.inputs.fwhm = 3.0 #must be a float
 psb6351_wf.connect(tshifter, 'out_file', spatblur, 'in_file')
 
 # tseriesmooth sounds kind of like tsirismooth, which reminded me
