@@ -17,8 +17,8 @@
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
+#SBATCH -o /scratch/kcrooks/crash/preproc_o
+#SBATCH -e /scratch/kcrooks/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -55,13 +55,13 @@ sids = ['021']
 # files that I won't need in the end. I use the os command path.join to 
 # combine different string elements into a path strcuture that will work
 # across operating systems.  The below is only quasi correct because in the last 
-# string element of both thte func_dir and fmap_dir variables I indicate
+# string element of both the func_dir and fmap_dir variables I indicate
 # directory structures with the '/' string.  This forward slash is only 
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351_today'
+base_dir = '/home/kcroo010/mattfeld_2020'
+work_dir = '/scratch/kcrooks'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
@@ -118,14 +118,14 @@ def best_vol(outlier_count):
 slice_timing_list = [] # Here I define an empty list variable
 for curr_json in func_json: # Here I am iterating over the variable func_json that was deefined above through the sorted glob
     curr_json_data = open(curr_json) # I need to open the json file
-    curr_func_metadata = json.load(curr_json_data) # THen I need to load the json file
+    curr_func_metadata = json.load(curr_json_data) # Then I need to load the json file
     slice_timing_list.append(curr_func_metadata['SliceTiming'])
 
 # Here I am establishing a nipype work flow that I will eventually execute
 # Code here become less python specific and more nipype specific.  They share similarites
 # but have some unique pecularities to take note.
 psb6351_wf = pe.Workflow(name='psb6351_wf') # First I create a workflow...this will serve as the backbone of the pipeline
-psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sids[0]}' # I deinfe the working directory where I want preliminary files to be written
+psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sids[0]}' # I define the working directory where I want preliminary files to be written
 psb6351_wf.config['execution']['use_relative_paths'] = True # I assign a execution variable to use relative paths...TRYING TO USE THIS TO FIX A BUG?
 
 # Create a Function node to substitute names of files created during pipeline
@@ -153,7 +153,7 @@ id_outliers.inputs.automask = True
 id_outliers.inputs.out_file = 'outlier_file'
 
 #ATM ONLY: Add an unwarping mapnode here using the field maps
-calc_distor_corr = pe.Node(afni.Qwarp(),
+'''calc_distor_corr = pe.Node(afni.Qwarp(),
                            name = 'calc_distor_corr')
 calc_distor_corr.inputs.plusminus = True
 calc_distor_corr.inputs.pblur = [0.05, 0.05]
@@ -169,13 +169,13 @@ distor_corr = pe.MapNode(afni.NwarpApply(),
                          name = 'distor_corr')
 distor_corr.inputs.ainterp = 'quintic'
 calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-distor_corr.inputs.in_file = func_files
+distor_corr.inputs.in_file = func_files'''
 # The line below is the other way that inputs can be provided to a node
 # Rather than hardcoding like above: distor_corr.inputs.ainterp = 'quintic'
 # You pass the output from the previous node...in this case calc_distor_corr
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
+# psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
@@ -235,6 +235,25 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
 # Add a mapnode to spatially blur the data
 # save the outputs to the datasink
+sp_blur = pe.MapNode(afni.BlurToFWHM(), iterfield=['in_file'], name= 'sp_blur')
+sp_blur.inputs.fwhm = 2.5 #size of blurring (in mm); Some schools of thought - 3x voxel size, 6 for single subject (credit Donisha), AFNI for 4, 2-2.5x voxel (Aaron)
+sp_blur.inputs.automask = True
+sp_blur.inputs.num_threads = 1 #1 default, try not to go over 4
+sp_blur.inputs.outputtype = 'NIFTI_GZ'
+#sp_blur.inputs.out_file = 'sp_blur_4mm_1th'
+psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
+
+# Temporal smoothing
+# tmp_smooth = pe.MapNode(afni.TSmooth(),
+# 		iterfield=['in_file'],
+#		name= 'imp_smooth')
+# tmp_smooth.inputs
+# p_blur.inputs.fwhm = 6.0 #size of blurring (in mm)
+# sp_blur.inputs.automask = True
+# sp_blur.inputs.num_threads = 1 #1 default
+# sp_blur.inputs.outputtype = 'NIFTI_GZ'
+# sp_blur.inputs.out_file = 'sp_blur_4mm_1th'
+# psb6351_wf.connect(tshifter, 'out_file', tmp_smooth, 'in_file')
 
 
 # Below is the node that collects all the data and saves
@@ -245,8 +264,9 @@ datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc1')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
+psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
+# psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
@@ -258,6 +278,6 @@ psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 # The following two lines set a work directory outside of my 
 # local git repo and runs the workflow
 psb6351_wf.run(plugin='SLURM',
-               plugin_args={'sbatch_args': ('--partition centos7_default-partition --qos pq_psb6351 --account acc_psb6351'),
+               plugin_args={'sbatch_args': ('--partition centos7_IB_44C_512G --qos pq_psb6351 --account acc_psb6351'),
                             'overwrite':True})
 
