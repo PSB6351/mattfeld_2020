@@ -17,9 +17,8 @@
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/crash/preproc_e
-
+#SBATCH -o /scratch/hlee053/crash/preproc_o
+#SBATCH -e /scratch/hlee053/crash/preproc_e
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.
@@ -146,6 +145,7 @@ getsubs.inputs.func_files = func_files
 # I want to use afni's 3dToutcount to find the number of
 # outliers at each volume.  I will use this information to
 # later select the earliest volume with the least number of outliers
+
 # to serve as the base for the motion correction
 id_outliers = pe.Node(afni.OutlierCount(),
                       name = 'id_outliers')
@@ -154,6 +154,7 @@ id_outliers.inputs.automask = True
 id_outliers.inputs.out_file = 'outlier_file'
 
 #ATM ONLY: Add an unwarping mapnode here using the field maps
+'''
 calc_distor_corr = pe.Node(afni.Qwarp(),
                            name = 'calc_distor_corr')
 calc_distor_corr.inputs.plusminus = True
@@ -177,7 +178,7 @@ distor_corr.inputs.in_file = func_files
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
 psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
-
+'''
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
 # for the index in the first 201 volumes that has the
@@ -247,7 +248,7 @@ datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
+#psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
