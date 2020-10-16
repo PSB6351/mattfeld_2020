@@ -236,6 +236,24 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 # Add a mapnode to spatially blur the data
 # save the outputs to the datasink
 
+sp_blur = pe.MapNode(afni.BlurToFWHM(),
+                     iterfield=['in_file'],
+                     name = 'sp_blur')
+sp_blur.inputs.automask = True
+sp_blur.inputs.fwhm = 9
+sp_blur.inputs.num_threads = 1
+sp_blur.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file') 
+
+## temporal smoothing
+
+tmp_smooth = pe.MapNode(afni.TSmooth(),
+                        iterfield=['in_file'],
+                        name = 'tmp_smooth')
+tmp_smooth.inputs.adaptive = 5
+tmp_smooth.inputs.lin = True
+tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -245,6 +263,8 @@ datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
+psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_blurring')
+psb6351_wf.connect(tmp_smooth, 'out_file', datasink, 'temporal_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
