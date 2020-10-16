@@ -8,7 +8,7 @@
 # The lines below set up important parameters for the slurm scheduling system
 # The first line tells the slurm scheduler which partition to send the job to
 # The next two lines tells which account to use.
-# The last two lines with the -o and -e flags tell where to write out the 
+# The last two lines with the -o and -e flags tell where to write out the
 # error and output text files.  These are useful when debugging code.  They
 # Are simple text files that cat be viewed with the commands cat or less.
 # The directory where these files are written must be created before otherwise
@@ -21,7 +21,7 @@
 #SBATCH -e /scratch/pvier002/mattfeld_2020/crash/preproc_e
 
 # The following commands are specific to python programming.
-# Tools that you'll need for your code must be imported.  
+# Tools that you'll need for your code must be imported.
 # You can import modules directly without renaming them (e.g., import os)
 # Or you can import and rename things (e.g., import pandas as pd)
 # Or you can import specific features of a module (e.g., from nipype.interfaces.utility import Function)
@@ -43,22 +43,22 @@ from nipype.interfaces.utility import Function
 import nibabel as nb
 import json
 import nipype.interfaces.io as nio
-import nipype.pipeline.engine as pe 
+import nipype.pipeline.engine as pe
 
 # Below I am assigning a list with one string element to the variable named sid
-# I do this because I want to iterate over subject ids (aka., sids) and I want 
+# I do this because I want to iterate over subject ids (aka., sids) and I want
 # to treat 021 as a whole and not as separate parts of the string which is
 # also iterable. I know this is a list because of the [] brackets
 sids = ['021']
 
 # Below I set up some important directories for getting data and writing
-# files that I won't need in the end. I use the os command path.join to 
+# files that I won't need in the end. I use the os command path.join to
 # combine different string elements into a path strcuture that will work
-# across operating systems.  The below is only quasi correct because in the last 
+# across operating systems.  The below is only quasi correct because in the last
 # string element of both thte func_dir and fmap_dir variables I indicate
-# directory structures with the '/' string.  This forward slash is only 
+# directory structures with the '/' string.  This forward slash is only
 # relevant for linux and osx operating systems....windows uses something different '\\'
-# I am also using f string formatting to insert the first element of the 
+# I am also using f string formatting to insert the first element of the
 # sids list variable into the string.
 base_dir = '/scratch/pvier002/mattfeld_2020'
 work_dir = '/scratch/pvier002'
@@ -68,13 +68,13 @@ fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
 
 # Get a list of my study task json and nifti converted files
 # I am using the glob function from glob that take a string as input
-# That string can contain wildcards to grab multiple files that meet 
+# That string can contain wildcards to grab multiple files that meet
 # the string completion.  I also, use the function sorted to order them
 # so that the func_files and fmap_files are in the same order based on
 # alphanumeric numbering criteria.  This is important when I get
 # specific elements from a .json file for a func file to preprocess.
 # Be careful!!!!  glob will return an empty list if your wildcard
-# string completion comes up empty rather than crash.  Make sure you 
+# string completion comes up empty rather than crash.  Make sure you
 # have no typos.
 # I plan to replace these lines with a nipype datagrabber soon.
 func_json = sorted(glob(func_dir + '/*.json'))
@@ -104,7 +104,7 @@ def get_subs(func_files):
 # Here I am building a function that takes in a
 # text file that includes the number of outliers
 # at each volume and then finds which volume (e.g., index)
-# has the minimum number of outliers (e.g., min) 
+# has the minimum number of outliers (e.g., min)
 # searching over the first 201 volumes
 # If the index function returns a list because there were
 # multiple volumes with the same outlier count, pick the first one
@@ -142,7 +142,7 @@ getsubs = pe.Node(Function(input_names=['func_files'],
 getsubs.inputs.func_files = func_files
 
 # Here I am inputing just the first run functional data
-# I want to use afni's 3dToutcount to find the number of 
+# I want to use afni's 3dToutcount to find the number of
 # outliers at each volume.  I will use this information to
 # later select the earliest volume with the least number of outliers
 # to serve as the base for the motion correction
@@ -181,9 +181,9 @@ psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
-# for the index in the first 201 volumes that has the 
+# for the index in the first 201 volumes that has the
 # minimum number of outliers and will use the min() function
-# I will use the index function to get the best vol. 
+# I will use the index function to get the best vol.
 getbestvol = pe.Node(Function(input_names=['outlier_count'],
                               output_names=['best_vol_num'],
                               function=best_vol),
@@ -191,7 +191,7 @@ getbestvol = pe.Node(Function(input_names=['outlier_count'],
 psb6351_wf.connect(id_outliers, 'out_file', getbestvol, 'outlier_count')
 
 # Extract the earliest volume with the
-# the fewest outliers of the first run as the reference 
+# the fewest outliers of the first run as the reference
 extractref = pe.Node(fsl.ExtractROI(t_size=1),
                      name = "extractref")
 extractref.inputs.in_file = func_files[0]
@@ -216,7 +216,7 @@ psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
-# I input the study func files as a list and the slice timing 
+# I input the study func files as a list and the slice timing
 # as a list of lists. I'm using a MapNode to iterate over the two.
 # this should allow me to parallelize this on the HPC
 tshifter = pe.MapNode(afni.TShift(),
@@ -239,15 +239,15 @@ fs_register.inputs.subject_id = f'sub-{sids[0]}'
 fs_register.inputs.subjects_dir = fs_dir
 psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
-# Add a mapnode to spatially blur the data - Isotropic smoothing kernel 
+# Add a mapnode to spatially blur the data - Isotropic smoothing kernel
 # save the outputs to the datasink
-##### Conducting spatial blurring on corrected data ###### 
+##### Conducting spatial blurring on corrected data ######
 sp_blur = pe.MapNode(afni.BlurToFWHM(),
                      iterfield=['in_file'],
                      name= 'sp_blur')
 sp_blur.inputs.fwhm = 2.5
 sp_blur.inputs.automask = True
-sp_blur.inputs.outputtype = 'NIFTI_GZ'                     
+sp_blur.inputs.outputtype = 'NIFTI_GZ'
 psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
 
 #### Conducting temporal Smoothing on the spatially blurred data #####
@@ -279,9 +279,8 @@ psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 
-# The following two lines set a work directory outside of my 
+# The following two lines set a work directory outside of my
 # local git repo and runs the workflow
 psb6351_wf.run(plugin='SLURM',
                plugin_args={'sbatch_args': ('--partition centos7_IB_44C_512G --qos pq_psb6351 --account acc_psb6351'),
                             'overwrite':True})
-
