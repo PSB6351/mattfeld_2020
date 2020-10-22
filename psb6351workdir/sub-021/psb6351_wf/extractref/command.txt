@@ -1,0 +1,2 @@
+fslroi /scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-1_bold.nii.gz /scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/extractref/sub-021_task-study_run-1_bold_roi.nii.gz 50 1
+

@@ -1,0 +1,57 @@
+[
+    {
+        "group": 1,
+        "imports": [],
+        "name": "0_getsubs",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [],
+        "name": "1_id_outliers",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "1_id_outliers"
+        ],
+        "name": "2_getbestvol",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "2_getbestvol"
+        ],
+        "name": "3_extractref",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "3_extractref"
+        ],
+        "name": "4_volreg",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "4_volreg"
+        ],
+        "name": "5_tshifter",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "5_tshifter",
+            "3_extractref",
+            "4_volreg",
+            "0_getsubs"
+        ],
+        "name": "6_datasink",
+        "size": 1
+    }
+]

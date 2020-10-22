@@ -1,0 +1,36 @@
+[
+    [
+        "basefile",
+        [
+            "/scratch/pvier002/mattfeld_2020/psb6351workdir/sub-021/psb6351_wf/extractref/sub-021_task-study_run-1_bold_roi.nii.gz",
+            "5cce4de4a75e723e5bf10d26a8992ccc"
+        ]
+    ],
+    [
+        "in_file",
+        [
+            "/scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-1_bold.nii.gz",
+            "4a6cd06a630e56e1634bc47bc2760637"
+        ]
+    ],
+    [
+        "interp",
+        "Fourier"
+    ],
+    [
+        "outputtype",
+        "NIFTI_GZ"
+    ],
+    [
+        "zpad",
+        4
+    ],
+    [
+        "needed_outputs",
+        [
+            "oned_file",
+            "oned_matrix_save",
+            "out_file"
+        ]
+    ]
+]
