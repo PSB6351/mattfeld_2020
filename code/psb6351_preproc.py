@@ -173,7 +173,7 @@ id_outliers.inputs.out_file = 'outlier_file'
 '''
 CURRENTLY CRASHING COMMENTING OUT TO WORK ON LATER
 #ATM ONLY: Add an unwarping mapnode here using the field maps
-'''calc_distor_corr = pe.Node(afni.Qwarp(),
+calc_distor_corr = pe.Node(afni.Qwarp(),
                            name = 'calc_distor_corr')
 calc_distor_corr.inputs.plusminus = True
 calc_distor_corr.inputs.pblur = [0.05, 0.05]
@@ -195,8 +195,7 @@ distor_corr.inputs.in_file = func_files
 # You pass the output from the previous node...in this case calc_distor_corr
 # it's output is called 'source_warp' and you pass that to this node distor_corr
 # and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
-'''
+psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching

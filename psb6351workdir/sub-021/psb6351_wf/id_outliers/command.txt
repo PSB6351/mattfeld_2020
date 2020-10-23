@@ -1,2 +1,0 @@
-3dToutcount -autoclip -automask -fraction -legendre -qthr 0.00100 /scratch/pvier002/mattfeld_2020/dset/sub-021/func/sub-021_task-study_run-1_bold.nii.gz
-
