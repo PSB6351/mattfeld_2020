@@ -216,6 +216,7 @@ extractref.inputs.in_file = func_files[0]
 #extractref.inputs.t_min = int(np.ceil(nb.load(study_func_files[0]).shape[3]/2)) #PICKING MIDDLE
 psb6351_wf.connect(getbestvol, 'best_vol_num', extractref, 't_min')
 
+'''
 # Below is the command that runs AFNI's 3dvolreg command.
 # this is the node that performs the motion correction
 # I'm iterating over the functional files which I am passing
@@ -231,6 +232,27 @@ volreg.inputs.interp = 'Fourier'
 volreg.inputs.num_threads = 2
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
+'''
+# Motion correct functional runs to the reference (1st volume of 1st run)
+motion_correct =  pe.MapNode(fsl.MCFLIRT(save_mats = True,
+                                         save_plots = True,
+                                         interpolation = 'sinc'),
+                             name = 'motion_correct',
+                             iterfield = ['in_file'])
+motion_correct.inputs.in_file = func_files
+psb6351_wf.connect(extractref, 'roi_file', motion_correct, 'ref_file')
+psb6351_wf.connect(motion_correct, 'par_file', outputnode, 'motion_parameters')
+psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
+
+###############################
+# ADD RAPIDART DETECTION HERE #
+###############################
+# Evaluate the number of outliers that are detected
+# when using zintensity_thresholds of 1, 2, 3, 4
+# and when using norm_threshold of 2, 1, 0.5, 0.2
+###############################
+
+
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
@@ -341,9 +363,11 @@ psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_blurring')
 psb6351_wf.connect(tmp_smooth, 'out_file', datasink, 'temporal_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 #psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
-psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
-psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
-psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+#psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
+#psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
+#psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+psb6351_wf.connect(motion_correct, 'par_file', datasink, 'motion.@motion_parameters')
+psb6351_wf.connect(motion_correct, 'out_file', datasink, 'motion.@realigned_files')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
