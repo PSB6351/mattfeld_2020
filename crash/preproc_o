@@ -1,300 +1,518 @@
-201015-23:12:06,648 nipype.workflow INFO:
+201119-20:33:05,637 nipype.workflow INFO:
 	 Workflow psb6351_wf settings: ['check', 'execution', 'logging', 'monitoring']
-201015-23:12:06,693 nipype.workflow INFO:
+201119-20:33:05,826 nipype.workflow INFO:
 	 Running in parallel.
-201015-23:12:06,701 nipype.workflow INFO:
-	 Pending[0] Submitting[2] jobs Slots[inf]
-201015-23:12:06,701 nipype.workflow INFO:
+201119-20:33:05,937 nipype.workflow INFO:
+	 Pending[0] Submitting[3] jobs Slots[inf]
+201119-20:33:05,937 nipype.workflow INFO:
 	 Submitting: psb6351_wf.getsubs ID: 0
-201015-23:12:06,705 nipype.workflow INFO:
-	 [Job 0] Cached (psb6351_wf.getsubs).
-201015-23:12:06,710 nipype.workflow INFO:
+201119-20:33:05,939 nipype.workflow INFO:
+	 [Node] Outdated cache found for "psb6351_wf.getsubs".
+201119-20:33:06,186 nipype.workflow INFO:
 	 Finished submitting: psb6351_wf.getsubs ID: 0
-201015-23:12:06,710 nipype.workflow INFO:
-	 Submitting: psb6351_wf.id_outliers ID: 1
-201015-23:12:07,61 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.id_outliers ID: 1
-201015-23:12:17,21 nipype.workflow INFO:
-	 [Job 1] Completed (psb6351_wf.id_outliers).
-201015-23:12:17,27 nipype.workflow INFO:
+201119-20:33:06,186 nipype.workflow INFO:
+	 Submitting: psb6351_wf.fssource ID: 1
+201119-20:33:06,354 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.fssource ID: 1
+201119-20:33:06,354 nipype.workflow INFO:
+	 Submitting: psb6351_wf.id_outliers ID: 3
+201119-20:33:06,358 nipype.workflow INFO:
+	 [Node] Outdated cache found for "psb6351_wf.id_outliers".
+201119-20:33:06,521 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.id_outliers ID: 3
+201119-20:33:10,83 nipype.workflow INFO:
+	 [Job 0] Completed (psb6351_wf.getsubs).
+201119-20:33:10,243 nipype.workflow INFO:
+	 [Job 1] Completed (psb6351_wf.fssource).
+201119-20:33:10,398 nipype.workflow INFO:
+	 Pending[1] Submitting[1] jobs Slots[inf]
+201119-20:33:10,398 nipype.workflow INFO:
+	 Submitting: psb6351_wf.fs_threshold ID: 2
+201119-20:33:10,569 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.fs_threshold ID: 2
+201119-20:33:20,249 nipype.workflow INFO:
+	 [Job 2] Completed (psb6351_wf.fs_threshold).
+201119-20:34:02,143 nipype.workflow INFO:
+	 [Job 3] Completed (psb6351_wf.id_outliers).
+201119-20:34:02,154 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:12:17,27 nipype.workflow INFO:
-	 Submitting: psb6351_wf.getbestvol ID: 2
-201015-23:12:17,44 nipype.workflow INFO:
+201119-20:34:02,154 nipype.workflow INFO:
+	 Submitting: psb6351_wf.getbestvol ID: 4
+201119-20:34:02,166 nipype.workflow INFO:
 	 [Node] Outdated cache found for "psb6351_wf.getbestvol".
-201015-23:12:17,361 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.getbestvol ID: 2
-201015-23:12:19,36 nipype.workflow INFO:
-	 [Job 2] Completed (psb6351_wf.getbestvol).
-201015-23:12:19,44 nipype.workflow INFO:
+201119-20:34:02,364 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.getbestvol ID: 4
+201119-20:34:08,149 nipype.workflow INFO:
+	 [Job 4] Completed (psb6351_wf.getbestvol).
+201119-20:34:08,153 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:12:19,45 nipype.workflow INFO:
-	 Submitting: psb6351_wf.extractref ID: 3
-201015-23:12:19,55 nipype.workflow INFO:
-	 [Job 3] Cached (psb6351_wf.extractref).
-201015-23:12:19,60 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.extractref ID: 3
-201015-23:12:19,62 nipype.workflow INFO:
+201119-20:34:08,153 nipype.workflow INFO:
+	 Submitting: psb6351_wf.extractref ID: 5
+201119-20:34:08,160 nipype.workflow INFO:
+	 [Node] Outdated cache found for "psb6351_wf.extractref".
+201119-20:34:08,339 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.extractref ID: 5
+201119-20:34:18,161 nipype.workflow INFO:
+	 [Job 5] Completed (psb6351_wf.extractref).
+201119-20:34:18,164 nipype.workflow INFO:
 	 Pending[0] Submitting[2] jobs Slots[inf]
-201015-23:12:19,63 nipype.workflow INFO:
-	 Submitting: psb6351_wf.fs_register ID: 4
-201015-23:12:19,73 nipype.workflow INFO:
-	 [Job 4] Cached (psb6351_wf.fs_register).
-201015-23:12:19,77 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.fs_register ID: 4
-201015-23:12:19,125 nipype.workflow INFO:
-	 Pending[0] Submitting[6] jobs Slots[inf]
-201015-23:12:19,126 nipype.workflow INFO:
-	 Submitting: _volreg0 ID: 10
-201015-23:12:19,139 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg0".
-201015-23:12:19,471 nipype.workflow INFO:
-	 Finished submitting: _volreg0 ID: 10
-201015-23:12:19,472 nipype.workflow INFO:
-	 Submitting: _volreg1 ID: 11
-201015-23:12:19,474 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg1".
-201015-23:12:19,791 nipype.workflow INFO:
-	 Finished submitting: _volreg1 ID: 11
-201015-23:12:19,792 nipype.workflow INFO:
-	 Submitting: _volreg2 ID: 12
-201015-23:12:19,802 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg2".
-201015-23:12:20,117 nipype.workflow INFO:
-	 Finished submitting: _volreg2 ID: 12
-201015-23:12:20,118 nipype.workflow INFO:
-	 Submitting: _volreg3 ID: 13
-201015-23:12:20,126 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg3".
-201015-23:12:20,519 nipype.workflow INFO:
-	 Finished submitting: _volreg3 ID: 13
-201015-23:12:20,519 nipype.workflow INFO:
-	 Submitting: _volreg4 ID: 14
-201015-23:12:20,527 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg4".
-201015-23:12:20,863 nipype.workflow INFO:
-	 Finished submitting: _volreg4 ID: 14
-201015-23:12:20,863 nipype.workflow INFO:
-	 Submitting: _volreg5 ID: 15
-201015-23:12:20,871 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_volreg5".
-201015-23:12:21,192 nipype.workflow INFO:
-	 Finished submitting: _volreg5 ID: 15
-201015-23:14:41,548 nipype.workflow INFO:
-	 [Job 10] Completed (_volreg0).
-201015-23:15:33,554 nipype.workflow INFO:
-	 [Job 11] Completed (_volreg1).
-201015-23:16:19,566 nipype.workflow INFO:
-	 [Job 12] Completed (_volreg2).
-201015-23:16:27,556 nipype.workflow INFO:
-	 [Job 13] Completed (_volreg3).
-201015-23:16:37,874 nipype.workflow INFO:
-	 [Job 15] Completed (_volreg5).
-201015-23:16:53,645 nipype.workflow INFO:
-	 [Job 14] Completed (_volreg4).
-201015-23:16:53,648 nipype.workflow INFO:
+201119-20:34:18,164 nipype.workflow INFO:
+	 Submitting: psb6351_wf.fs_register ID: 6
+201119-20:34:18,375 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.fs_register ID: 6
+201119-20:34:18,498 nipype.workflow INFO:
+	 Pending[1] Submitting[6] jobs Slots[inf]
+201119-20:34:18,499 nipype.workflow INFO:
+	 Submitting: _motion_correct0 ID: 19
+201119-20:34:18,696 nipype.workflow INFO:
+	 Finished submitting: _motion_correct0 ID: 19
+201119-20:34:18,696 nipype.workflow INFO:
+	 Submitting: _motion_correct1 ID: 20
+201119-20:34:18,902 nipype.workflow INFO:
+	 Finished submitting: _motion_correct1 ID: 20
+201119-20:34:18,903 nipype.workflow INFO:
+	 Submitting: _motion_correct2 ID: 21
+201119-20:34:19,92 nipype.workflow INFO:
+	 Finished submitting: _motion_correct2 ID: 21
+201119-20:34:19,93 nipype.workflow INFO:
+	 Submitting: _motion_correct3 ID: 22
+201119-20:34:19,280 nipype.workflow INFO:
+	 Finished submitting: _motion_correct3 ID: 22
+201119-20:34:19,280 nipype.workflow INFO:
+	 Submitting: _motion_correct4 ID: 23
+201119-20:34:19,455 nipype.workflow INFO:
+	 Finished submitting: _motion_correct4 ID: 23
+201119-20:34:19,455 nipype.workflow INFO:
+	 Submitting: _motion_correct5 ID: 24
+201119-20:34:19,640 nipype.workflow INFO:
+	 Finished submitting: _motion_correct5 ID: 24
+201119-20:36:10,190 nipype.workflow INFO:
+	 [Job 6] Completed (psb6351_wf.fs_register).
+201119-20:36:11,69 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-20:36:11,70 nipype.workflow INFO:
+	 Submitting: psb6351_wf.fs_transform ID: 7
+201119-20:36:11,256 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.fs_transform ID: 7
+201119-20:36:19,41 nipype.workflow INFO:
+	 [Job 7] Completed (psb6351_wf.fs_transform).
+201119-20:49:56,811 nipype.workflow INFO:
+	 [Job 20] Completed (_motion_correct1).
+201119-20:50:10,672 nipype.workflow INFO:
+	 [Job 19] Completed (_motion_correct0).
+201119-20:52:32,773 nipype.workflow INFO:
+	 [Job 21] Completed (_motion_correct2).
+201119-20:52:40,779 nipype.workflow INFO:
+	 [Job 22] Completed (_motion_correct3).
+201119-21:14:19,780 nipype.workflow INFO:
+	 [Job 23] Completed (_motion_correct4).
+201119-21:14:23,786 nipype.workflow INFO:
+	 [Job 24] Completed (_motion_correct5).
+201119-21:14:23,788 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:16:53,651 nipype.workflow INFO:
-	 Submitting: psb6351_wf.volreg ID: 5
-201015-23:16:53,658 nipype.workflow INFO:
-	 [Node] Outdated cache found for "psb6351_wf.volreg".
-201015-23:16:53,986 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.volreg ID: 5
-201015-23:17:01,599 nipype.workflow INFO:
-	 [Job 5] Completed (psb6351_wf.volreg).
-201015-23:17:01,605 nipype.workflow INFO:
-	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:17:01,663 nipype.workflow INFO:
-	 Pending[0] Submitting[6] jobs Slots[inf]
-201015-23:17:01,663 nipype.workflow INFO:
-	 Submitting: _tshifter0 ID: 16
-201015-23:17:01,673 nipype.workflow INFO:
+201119-21:14:23,796 nipype.workflow INFO:
+	 Submitting: psb6351_wf.motion_correct ID: 8
+201119-21:14:23,967 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.motion_correct ID: 8
+201119-21:14:29,790 nipype.workflow INFO:
+	 [Job 8] Completed (psb6351_wf.motion_correct).
+201119-21:14:29,793 nipype.workflow INFO:
+	 Pending[0] Submitting[2] jobs Slots[inf]
+201119-21:14:29,835 nipype.workflow INFO:
+	 Pending[0] Submitting[12] jobs Slots[inf]
+201119-21:14:29,835 nipype.workflow INFO:
+	 Submitting: _tshifter0 ID: 25
+201119-21:14:29,843 nipype.workflow INFO:
 	 [Node] Outdated cache found for "_tshifter0".
-201015-23:17:01,992 nipype.workflow INFO:
-	 Finished submitting: _tshifter0 ID: 16
-201015-23:17:01,992 nipype.workflow INFO:
-	 Submitting: _tshifter1 ID: 17
-201015-23:17:01,999 nipype.workflow INFO:
+201119-21:14:30,9 nipype.workflow INFO:
+	 Finished submitting: _tshifter0 ID: 25
+201119-21:14:30,9 nipype.workflow INFO:
+	 Submitting: _tshifter1 ID: 26
+201119-21:14:30,15 nipype.workflow INFO:
 	 [Node] Outdated cache found for "_tshifter1".
-201015-23:17:02,303 nipype.workflow INFO:
-	 Finished submitting: _tshifter1 ID: 17
-201015-23:17:02,304 nipype.workflow INFO:
-	 Submitting: _tshifter2 ID: 18
-201015-23:17:02,313 nipype.workflow INFO:
+201119-21:14:30,186 nipype.workflow INFO:
+	 Finished submitting: _tshifter1 ID: 26
+201119-21:14:30,186 nipype.workflow INFO:
+	 Submitting: _tshifter2 ID: 27
+201119-21:14:30,192 nipype.workflow INFO:
 	 [Node] Outdated cache found for "_tshifter2".
-201015-23:17:02,663 nipype.workflow INFO:
-	 Finished submitting: _tshifter2 ID: 18
-201015-23:17:02,663 nipype.workflow INFO:
-	 Submitting: _tshifter3 ID: 19
-201015-23:17:02,673 nipype.workflow INFO:
+201119-21:14:30,358 nipype.workflow INFO:
+	 Finished submitting: _tshifter2 ID: 27
+201119-21:14:30,358 nipype.workflow INFO:
+	 Submitting: _tshifter3 ID: 28
+201119-21:14:30,363 nipype.workflow INFO:
 	 [Node] Outdated cache found for "_tshifter3".
-201015-23:17:03,56 nipype.workflow INFO:
-	 Finished submitting: _tshifter3 ID: 19
-201015-23:17:03,56 nipype.workflow INFO:
-	 Submitting: _tshifter4 ID: 20
-201015-23:17:03,64 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tshifter4".
-201015-23:17:03,399 nipype.workflow INFO:
-	 Finished submitting: _tshifter4 ID: 20
-201015-23:17:03,400 nipype.workflow INFO:
-	 Submitting: _tshifter5 ID: 21
-201015-23:17:03,411 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tshifter5".
-201015-23:17:03,778 nipype.workflow INFO:
-	 Finished submitting: _tshifter5 ID: 21
-201015-23:18:10,102 nipype.workflow INFO:
-	 [Job 16] Completed (_tshifter0).
-201015-23:18:10,982 nipype.workflow INFO:
-	 [Job 19] Completed (_tshifter3).
-201015-23:18:11,285 nipype.workflow INFO:
-	 [Job 20] Completed (_tshifter4).
-201015-23:18:11,603 nipype.workflow INFO:
-	 [Job 21] Completed (_tshifter5).
-201015-23:18:14,149 nipype.workflow INFO:
-	 [Job 17] Completed (_tshifter1).
-201015-23:18:22,124 nipype.workflow INFO:
-	 [Job 18] Completed (_tshifter2).
-201015-23:18:22,128 nipype.workflow INFO:
+201119-21:14:30,529 nipype.workflow INFO:
+	 Finished submitting: _tshifter3 ID: 28
+201119-21:14:30,529 nipype.workflow INFO:
+	 Submitting: _tshifter4 ID: 29
+201119-21:14:30,695 nipype.workflow INFO:
+	 Finished submitting: _tshifter4 ID: 29
+201119-21:14:30,696 nipype.workflow INFO:
+	 Submitting: _tshifter5 ID: 30
+201119-21:14:30,864 nipype.workflow INFO:
+	 Finished submitting: _tshifter5 ID: 30
+201119-21:14:30,864 nipype.workflow INFO:
+	 Submitting: _rapidart_detect0 ID: 31
+201119-21:14:31,79 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect0 ID: 31
+201119-21:14:31,79 nipype.workflow INFO:
+	 Submitting: _rapidart_detect1 ID: 32
+201119-21:14:31,289 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect1 ID: 32
+201119-21:14:31,289 nipype.workflow INFO:
+	 Submitting: _rapidart_detect2 ID: 33
+201119-21:14:31,470 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect2 ID: 33
+201119-21:14:31,471 nipype.workflow INFO:
+	 Submitting: _rapidart_detect3 ID: 34
+201119-21:14:31,649 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect3 ID: 34
+201119-21:14:31,649 nipype.workflow INFO:
+	 Submitting: _rapidart_detect4 ID: 35
+201119-21:14:31,823 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect4 ID: 35
+201119-21:14:31,823 nipype.workflow INFO:
+	 Submitting: _rapidart_detect5 ID: 36
+201119-21:14:31,995 nipype.workflow INFO:
+	 Finished submitting: _rapidart_detect5 ID: 36
+201119-21:14:55,316 nipype.workflow INFO:
+	 [Job 32] Completed (_rapidart_detect1).
+201119-21:14:55,506 nipype.workflow INFO:
+	 [Job 33] Completed (_rapidart_detect2).
+201119-21:14:55,685 nipype.workflow INFO:
+	 [Job 34] Completed (_rapidart_detect3).
+201119-21:14:55,865 nipype.workflow INFO:
+	 [Job 35] Completed (_rapidart_detect4).
+201119-21:14:56,47 nipype.workflow INFO:
+	 [Job 36] Completed (_rapidart_detect5).
+201119-21:14:57,151 nipype.workflow INFO:
+	 [Job 31] Completed (_rapidart_detect0).
+201119-21:14:57,154 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-21:14:57,160 nipype.workflow INFO:
+	 Submitting: psb6351_wf.rapidart_detect ID: 17
+201119-21:14:57,336 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.rapidart_detect ID: 17
+201119-21:15:01,140 nipype.workflow INFO:
+	 [Job 17] Completed (psb6351_wf.rapidart_detect).
+201119-21:15:50,233 nipype.workflow INFO:
+	 [Job 25] Completed (_tshifter0).
+201119-21:15:50,383 nipype.workflow INFO:
+	 [Job 26] Completed (_tshifter1).
+201119-21:16:02,240 nipype.workflow INFO:
+	 [Job 27] Completed (_tshifter2).
+201119-21:16:02,389 nipype.workflow INFO:
+	 [Job 28] Completed (_tshifter3).
+201119-21:16:02,539 nipype.workflow INFO:
+	 [Job 29] Completed (_tshifter4).
+201119-21:16:02,688 nipype.workflow INFO:
+	 [Job 30] Completed (_tshifter5).
+201119-21:16:02,691 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:18:22,134 nipype.workflow INFO:
-	 Submitting: psb6351_wf.tshifter ID: 6
-201015-23:18:22,151 nipype.workflow INFO:
+201119-21:16:02,694 nipype.workflow INFO:
+	 Submitting: psb6351_wf.tshifter ID: 9
+201119-21:16:02,703 nipype.workflow INFO:
 	 [Node] Outdated cache found for "psb6351_wf.tshifter".
-201015-23:18:22,458 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.tshifter ID: 6
-201015-23:18:26,117 nipype.workflow INFO:
-	 [Job 6] Completed (psb6351_wf.tshifter).
-201015-23:18:26,123 nipype.workflow INFO:
+201119-21:16:02,881 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.tshifter ID: 9
+201119-21:16:04,243 nipype.workflow INFO:
+	 [Job 9] Completed (psb6351_wf.tshifter).
+201119-21:16:04,246 nipype.workflow INFO:
+	 Pending[0] Submitting[2] jobs Slots[inf]
+201119-21:16:04,288 nipype.workflow INFO:
+	 Pending[0] Submitting[12] jobs Slots[inf]
+201119-21:16:04,288 nipype.workflow INFO:
+	 Submitting: _maskfunc0 ID: 37
+201119-21:16:04,453 nipype.workflow INFO:
+	 Finished submitting: _maskfunc0 ID: 37
+201119-21:16:04,453 nipype.workflow INFO:
+	 Submitting: _maskfunc1 ID: 38
+201119-21:16:04,622 nipype.workflow INFO:
+	 Finished submitting: _maskfunc1 ID: 38
+201119-21:16:04,622 nipype.workflow INFO:
+	 Submitting: _maskfunc2 ID: 39
+201119-21:16:04,788 nipype.workflow INFO:
+	 Finished submitting: _maskfunc2 ID: 39
+201119-21:16:04,788 nipype.workflow INFO:
+	 Submitting: _maskfunc3 ID: 40
+201119-21:16:04,955 nipype.workflow INFO:
+	 Finished submitting: _maskfunc3 ID: 40
+201119-21:16:04,955 nipype.workflow INFO:
+	 Submitting: _maskfunc4 ID: 41
+201119-21:16:05,128 nipype.workflow INFO:
+	 Finished submitting: _maskfunc4 ID: 41
+201119-21:16:05,128 nipype.workflow INFO:
+	 Submitting: _maskfunc5 ID: 42
+201119-21:16:05,299 nipype.workflow INFO:
+	 Finished submitting: _maskfunc5 ID: 42
+201119-21:16:05,299 nipype.workflow INFO:
+	 Submitting: _sp_blur0 ID: 43
+201119-21:16:05,481 nipype.workflow INFO:
+	 Finished submitting: _sp_blur0 ID: 43
+201119-21:16:05,481 nipype.workflow INFO:
+	 Submitting: _sp_blur1 ID: 44
+201119-21:16:05,652 nipype.workflow INFO:
+	 Finished submitting: _sp_blur1 ID: 44
+201119-21:16:05,652 nipype.workflow INFO:
+	 Submitting: _sp_blur2 ID: 45
+201119-21:16:05,818 nipype.workflow INFO:
+	 Finished submitting: _sp_blur2 ID: 45
+201119-21:16:05,819 nipype.workflow INFO:
+	 Submitting: _sp_blur3 ID: 46
+201119-21:16:05,986 nipype.workflow INFO:
+	 Finished submitting: _sp_blur3 ID: 46
+201119-21:16:05,986 nipype.workflow INFO:
+	 Submitting: _sp_blur4 ID: 47
+201119-21:16:06,191 nipype.workflow INFO:
+	 Finished submitting: _sp_blur4 ID: 47
+201119-21:16:06,191 nipype.workflow INFO:
+	 Submitting: _sp_blur5 ID: 48
+201119-21:16:06,412 nipype.workflow INFO:
+	 Finished submitting: _sp_blur5 ID: 48
+201119-21:17:08,764 nipype.workflow INFO:
+	 [Job 37] Completed (_maskfunc0).
+201119-21:17:08,923 nipype.workflow INFO:
+	 [Job 38] Completed (_maskfunc1).
+201119-21:17:17,64 nipype.workflow INFO:
+	 [Job 41] Completed (_maskfunc4).
+201119-21:17:17,224 nipype.workflow INFO:
+	 [Job 42] Completed (_maskfunc5).
+201119-21:17:18,757 nipype.workflow INFO:
+	 [Job 39] Completed (_maskfunc2).
+201119-21:17:18,907 nipype.workflow INFO:
+	 [Job 40] Completed (_maskfunc3).
+201119-21:17:19,827 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-21:17:19,828 nipype.workflow INFO:
+	 Submitting: psb6351_wf.maskfunc ID: 10
+201119-21:17:20,17 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.maskfunc ID: 10
+201119-21:17:25,681 nipype.workflow INFO:
+	 [Job 10] Completed (psb6351_wf.maskfunc).
+201119-21:17:25,684 nipype.workflow INFO:
+	 Pending[6] Submitting[2] jobs Slots[inf]
+201119-21:17:25,721 nipype.workflow INFO:
+	 Pending[6] Submitting[12] jobs Slots[inf]
+201119-21:17:25,722 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc0 ID: 49
+201119-21:17:25,886 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc0 ID: 49
+201119-21:17:25,886 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc1 ID: 50
+201119-21:17:26,54 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc1 ID: 50
+201119-21:17:26,54 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc2 ID: 51
+201119-21:17:26,222 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc2 ID: 51
+201119-21:17:26,222 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc3 ID: 52
+201119-21:17:26,399 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc3 ID: 52
+201119-21:17:26,399 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc4 ID: 53
+201119-21:17:26,574 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc4 ID: 53
+201119-21:17:26,575 nipype.workflow INFO:
+	 Submitting: _smooth_meanfunc5 ID: 54
+201119-21:17:26,750 nipype.workflow INFO:
+	 Finished submitting: _smooth_meanfunc5 ID: 54
+201119-21:17:26,750 nipype.workflow INFO:
+	 Submitting: _smooth_median0 ID: 55
+201119-21:17:26,925 nipype.workflow INFO:
+	 Finished submitting: _smooth_median0 ID: 55
+201119-21:17:26,925 nipype.workflow INFO:
+	 Submitting: _smooth_median1 ID: 56
+201119-21:17:27,107 nipype.workflow INFO:
+	 Finished submitting: _smooth_median1 ID: 56
+201119-21:17:27,107 nipype.workflow INFO:
+	 Submitting: _smooth_median2 ID: 57
+201119-21:17:27,285 nipype.workflow INFO:
+	 Finished submitting: _smooth_median2 ID: 57
+201119-21:17:27,286 nipype.workflow INFO:
+	 Submitting: _smooth_median3 ID: 58
+201119-21:17:27,464 nipype.workflow INFO:
+	 Finished submitting: _smooth_median3 ID: 58
+201119-21:17:27,464 nipype.workflow INFO:
+	 Submitting: _smooth_median4 ID: 59
+201119-21:17:27,638 nipype.workflow INFO:
+	 Finished submitting: _smooth_median4 ID: 59
+201119-21:17:27,638 nipype.workflow INFO:
+	 Submitting: _smooth_median5 ID: 60
+201119-21:17:27,807 nipype.workflow INFO:
+	 Finished submitting: _smooth_median5 ID: 60
+201119-21:17:40,497 nipype.workflow INFO:
+	 [Job 49] Completed (_smooth_meanfunc0).
+201119-21:17:40,647 nipype.workflow INFO:
+	 [Job 50] Completed (_smooth_meanfunc1).
+201119-21:17:40,798 nipype.workflow INFO:
+	 [Job 51] Completed (_smooth_meanfunc2).
+201119-21:17:43,233 nipype.workflow INFO:
+	 [Job 52] Completed (_smooth_meanfunc3).
+201119-21:17:43,392 nipype.workflow INFO:
+	 [Job 53] Completed (_smooth_meanfunc4).
+201119-21:17:43,552 nipype.workflow INFO:
+	 [Job 54] Completed (_smooth_meanfunc5).
+201119-21:17:43,706 nipype.workflow INFO:
+	 [Job 55] Completed (_smooth_median0).
+201119-21:17:44,312 nipype.workflow INFO:
+	 [Job 59] Completed (_smooth_median4).
+201119-21:17:44,473 nipype.workflow INFO:
+	 [Job 60] Completed (_smooth_median5).
+201119-21:17:44,475 nipype.workflow INFO:
+	 Pending[9] Submitting[1] jobs Slots[inf]
+201119-21:17:44,477 nipype.workflow INFO:
+	 Submitting: psb6351_wf.smooth_meanfunc ID: 11
+201119-21:17:44,641 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.smooth_meanfunc ID: 11
+201119-21:17:47,723 nipype.workflow INFO:
+	 [Job 56] Completed (_smooth_median1).
+201119-21:17:48,170 nipype.workflow INFO:
+	 [Job 11] Completed (psb6351_wf.smooth_meanfunc).
+201119-21:17:49,726 nipype.workflow INFO:
+	 [Job 57] Completed (_smooth_median2).
+201119-21:17:49,887 nipype.workflow INFO:
+	 [Job 58] Completed (_smooth_median3).
+201119-21:17:49,889 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-21:17:49,891 nipype.workflow INFO:
+	 Submitting: psb6351_wf.smooth_median ID: 12
+201119-21:17:50,56 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.smooth_median ID: 12
+201119-21:17:51,748 nipype.workflow INFO:
+	 [Job 12] Completed (psb6351_wf.smooth_median).
+201119-21:17:51,751 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-21:17:51,751 nipype.workflow INFO:
+	 Submitting: psb6351_wf.smooth_merge ID: 13
+201119-21:17:51,920 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.smooth_merge ID: 13
+201119-21:17:55,720 nipype.workflow INFO:
+	 [Job 13] Completed (psb6351_wf.smooth_merge).
+201119-21:17:55,723 nipype.workflow INFO:
+	 Pending[6] Submitting[1] jobs Slots[inf]
+201119-21:17:55,744 nipype.workflow INFO:
+	 Pending[6] Submitting[6] jobs Slots[inf]
+201119-21:17:55,744 nipype.workflow INFO:
+	 Submitting: _smooth0 ID: 61
+201119-21:17:55,910 nipype.workflow INFO:
+	 Finished submitting: _smooth0 ID: 61
+201119-21:17:55,910 nipype.workflow INFO:
+	 Submitting: _smooth1 ID: 62
+201119-21:17:56,77 nipype.workflow INFO:
+	 Finished submitting: _smooth1 ID: 62
+201119-21:17:56,78 nipype.workflow INFO:
+	 Submitting: _smooth2 ID: 63
+201119-21:17:56,243 nipype.workflow INFO:
+	 Finished submitting: _smooth2 ID: 63
+201119-21:17:56,243 nipype.workflow INFO:
+	 Submitting: _smooth3 ID: 64
+201119-21:17:56,425 nipype.workflow INFO:
+	 Finished submitting: _smooth3 ID: 64
+201119-21:17:56,425 nipype.workflow INFO:
+	 Submitting: _smooth4 ID: 65
+201119-21:17:56,622 nipype.workflow INFO:
+	 Finished submitting: _smooth4 ID: 65
+201119-21:17:56,623 nipype.workflow INFO:
+	 Submitting: _smooth5 ID: 66
+201119-21:17:56,797 nipype.workflow INFO:
+	 Finished submitting: _smooth5 ID: 66
+201119-21:22:12,592 nipype.workflow INFO:
+	 [Job 62] Completed (_smooth1).
+201119-21:23:02,415 nipype.workflow INFO:
+	 [Job 61] Completed (_smooth0).
+201119-21:28:52,548 nipype.workflow INFO:
+	 [Job 63] Completed (_smooth2).
+201119-21:31:05,709 nipype.workflow INFO:
+	 [Job 43] Completed (_sp_blur0).
+201119-21:32:05,753 nipype.workflow INFO:
+	 [Job 44] Completed (_sp_blur1).
+201119-21:34:20,265 nipype.workflow INFO:
+	 [Job 48] Completed (_sp_blur5).
+201119-21:34:51,984 nipype.workflow INFO:
+	 [Job 46] Completed (_sp_blur3).
+201119-21:34:55,837 nipype.workflow INFO:
+	 [Job 45] Completed (_sp_blur2).
+201119-21:35:05,851 nipype.workflow INFO:
+	 [Job 47] Completed (_sp_blur4).
+201119-21:35:06,309 nipype.workflow INFO:
+	 Pending[3] Submitting[1] jobs Slots[inf]
+201119-21:35:06,328 nipype.workflow INFO:
+	 Submitting: psb6351_wf.sp_blur ID: 15
+201119-21:35:06,495 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.sp_blur ID: 15
+201119-21:35:08,296 nipype.workflow INFO:
+	 [Job 15] Completed (psb6351_wf.sp_blur).
+201119-21:35:08,299 nipype.workflow INFO:
+	 Pending[3] Submitting[1] jobs Slots[inf]
+201119-21:35:08,319 nipype.workflow INFO:
+	 Pending[3] Submitting[6] jobs Slots[inf]
+201119-21:35:08,319 nipype.workflow INFO:
+	 Submitting: _tmp_smooth0 ID: 67
+201119-21:35:08,491 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth0 ID: 67
+201119-21:35:08,491 nipype.workflow INFO:
+	 Submitting: _tmp_smooth1 ID: 68
+201119-21:35:08,666 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth1 ID: 68
+201119-21:35:08,667 nipype.workflow INFO:
+	 Submitting: _tmp_smooth2 ID: 69
+201119-21:35:08,836 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth2 ID: 69
+201119-21:35:08,836 nipype.workflow INFO:
+	 Submitting: _tmp_smooth3 ID: 70
+201119-21:35:09,3 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth3 ID: 70
+201119-21:35:09,4 nipype.workflow INFO:
+	 Submitting: _tmp_smooth4 ID: 71
+201119-21:35:09,170 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth4 ID: 71
+201119-21:35:09,170 nipype.workflow INFO:
+	 Submitting: _tmp_smooth5 ID: 72
+201119-21:35:09,336 nipype.workflow INFO:
+	 Finished submitting: _tmp_smooth5 ID: 72
+201119-21:35:46,338 nipype.workflow INFO:
+	 [Job 67] Completed (_tmp_smooth0).
+201119-21:35:46,496 nipype.workflow INFO:
+	 [Job 68] Completed (_tmp_smooth1).
+201119-21:35:47,117 nipype.workflow INFO:
+	 [Job 72] Completed (_tmp_smooth5).
+201119-21:35:48,469 nipype.workflow INFO:
+	 [Job 70] Completed (_tmp_smooth3).
+201119-21:35:48,624 nipype.workflow INFO:
+	 [Job 71] Completed (_tmp_smooth4).
+201119-21:35:54,292 nipype.workflow INFO:
+	 [Job 69] Completed (_tmp_smooth2).
+201119-21:35:54,294 nipype.workflow INFO:
+	 Pending[3] Submitting[1] jobs Slots[inf]
+201119-21:35:54,296 nipype.workflow INFO:
+	 Submitting: psb6351_wf.tmp_smooth ID: 16
+201119-21:35:54,460 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.tmp_smooth ID: 16
+201119-21:35:56,295 nipype.workflow INFO:
+	 [Job 16] Completed (psb6351_wf.tmp_smooth).
+201119-21:38:49,989 nipype.workflow INFO:
+	 [Job 64] Completed (_smooth3).
+201119-21:53:10,743 nipype.workflow INFO:
+	 [Job 65] Completed (_smooth4).
+201119-22:12:55,854 nipype.workflow INFO:
+	 [Job 66] Completed (_smooth5).
+201119-22:12:55,856 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:18:26,158 nipype.workflow INFO:
-	 Pending[0] Submitting[6] jobs Slots[inf]
-201015-23:18:26,159 nipype.workflow INFO:
-	 Submitting: _sp_blur0 ID: 22
-201015-23:18:26,166 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur0".
-201015-23:18:26,518 nipype.workflow INFO:
-	 Finished submitting: _sp_blur0 ID: 22
-201015-23:18:26,518 nipype.workflow INFO:
-	 Submitting: _sp_blur1 ID: 23
-201015-23:18:26,526 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur1".
-201015-23:18:26,851 nipype.workflow INFO:
-	 Finished submitting: _sp_blur1 ID: 23
-201015-23:18:26,851 nipype.workflow INFO:
-	 Submitting: _sp_blur2 ID: 24
-201015-23:18:26,858 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur2".
-201015-23:18:27,161 nipype.workflow INFO:
-	 Finished submitting: _sp_blur2 ID: 24
-201015-23:18:27,162 nipype.workflow INFO:
-	 Submitting: _sp_blur3 ID: 25
-201015-23:18:27,169 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur3".
-201015-23:18:27,510 nipype.workflow INFO:
-	 Finished submitting: _sp_blur3 ID: 25
-201015-23:18:27,510 nipype.workflow INFO:
-	 Submitting: _sp_blur4 ID: 26
-201015-23:18:27,514 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur4".
-201015-23:18:27,841 nipype.workflow INFO:
-	 Finished submitting: _sp_blur4 ID: 26
-201015-23:18:27,842 nipype.workflow INFO:
-	 Submitting: _sp_blur5 ID: 27
-201015-23:18:27,848 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_sp_blur5".
-201015-23:18:28,243 nipype.workflow INFO:
-	 Finished submitting: _sp_blur5 ID: 27
-201015-23:29:06,895 nipype.workflow INFO:
-	 [Job 22] Completed (_sp_blur0).
-201015-23:29:14,907 nipype.workflow INFO:
-	 [Job 23] Completed (_sp_blur1).
-201015-23:29:37,397 nipype.workflow INFO:
-	 [Job 26] Completed (_sp_blur4).
-201015-23:29:39,384 nipype.workflow INFO:
-	 [Job 27] Completed (_sp_blur5).
-201015-23:30:07,211 nipype.workflow INFO:
-	 [Job 25] Completed (_sp_blur3).
-201015-23:31:09,34 nipype.workflow INFO:
-	 [Job 24] Completed (_sp_blur2).
-201015-23:31:09,37 nipype.workflow INFO:
+201119-22:12:55,871 nipype.workflow INFO:
+	 Submitting: psb6351_wf.smooth ID: 14
+201119-22:12:56,33 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.smooth ID: 14
+201119-22:12:59,862 nipype.workflow INFO:
+	 [Job 14] Completed (psb6351_wf.smooth).
+201119-22:12:59,864 nipype.workflow INFO:
 	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:31:09,39 nipype.workflow INFO:
-	 Submitting: psb6351_wf.sp_blur ID: 7
-201015-23:31:09,46 nipype.workflow INFO:
-	 [Node] Outdated cache found for "psb6351_wf.sp_blur".
-201015-23:31:09,357 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.sp_blur ID: 7
-201015-23:31:15,14 nipype.workflow INFO:
-	 [Job 7] Completed (psb6351_wf.sp_blur).
-201015-23:31:15,20 nipype.workflow INFO:
-	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:31:15,66 nipype.workflow INFO:
-	 Pending[0] Submitting[6] jobs Slots[inf]
-201015-23:31:15,66 nipype.workflow INFO:
-	 Submitting: _tmp_smooth0 ID: 28
-201015-23:31:15,88 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth0".
-201015-23:31:15,388 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth0 ID: 28
-201015-23:31:15,388 nipype.workflow INFO:
-	 Submitting: _tmp_smooth1 ID: 29
-201015-23:31:15,400 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth1".
-201015-23:31:15,704 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth1 ID: 29
-201015-23:31:15,705 nipype.workflow INFO:
-	 Submitting: _tmp_smooth2 ID: 30
-201015-23:31:15,715 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth2".
-201015-23:31:15,996 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth2 ID: 30
-201015-23:31:15,996 nipype.workflow INFO:
-	 Submitting: _tmp_smooth3 ID: 31
-201015-23:31:16,9 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth3".
-201015-23:31:16,288 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth3 ID: 31
-201015-23:31:16,289 nipype.workflow INFO:
-	 Submitting: _tmp_smooth4 ID: 32
-201015-23:31:16,300 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth4".
-201015-23:31:16,572 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth4 ID: 32
-201015-23:31:16,572 nipype.workflow INFO:
-	 Submitting: _tmp_smooth5 ID: 33
-201015-23:31:16,581 nipype.workflow INFO:
-	 [Node] Outdated cache found for "_tmp_smooth5".
-201015-23:31:16,864 nipype.workflow INFO:
-	 Finished submitting: _tmp_smooth5 ID: 33
-201015-23:31:37,387 nipype.workflow INFO:
-	 [Job 29] Completed (_tmp_smooth1).
-201015-23:31:39,144 nipype.workflow INFO:
-	 [Job 28] Completed (_tmp_smooth0).
-201015-23:31:43,158 nipype.workflow INFO:
-	 [Job 30] Completed (_tmp_smooth2).
-201015-23:31:47,666 nipype.workflow INFO:
-	 [Job 33] Completed (_tmp_smooth5).
-201015-23:31:49,171 nipype.workflow INFO:
-	 [Job 31] Completed (_tmp_smooth3).
-201015-23:31:49,446 nipype.workflow INFO:
-	 [Job 32] Completed (_tmp_smooth4).
-201015-23:31:49,450 nipype.workflow INFO:
-	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:31:49,452 nipype.workflow INFO:
-	 Submitting: psb6351_wf.tmp_smooth ID: 8
-201015-23:31:49,461 nipype.workflow INFO:
-	 [Node] Outdated cache found for "psb6351_wf.tmp_smooth".
-201015-23:31:49,754 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.tmp_smooth ID: 8
-201015-23:31:53,155 nipype.workflow INFO:
-	 [Job 8] Completed (psb6351_wf.tmp_smooth).
-201015-23:31:53,159 nipype.workflow INFO:
-	 Pending[0] Submitting[1] jobs Slots[inf]
-201015-23:31:53,160 nipype.workflow INFO:
-	 Submitting: psb6351_wf.datasink ID: 9
-201015-23:31:53,237 nipype.workflow INFO:
+201119-22:12:59,864 nipype.workflow INFO:
+	 Submitting: psb6351_wf.datasink ID: 18
+201119-22:13:00,0 nipype.workflow INFO:
 	 [Node] Outdated cache found for "psb6351_wf.datasink".
-201015-23:31:53,545 nipype.workflow INFO:
-	 Finished submitting: psb6351_wf.datasink ID: 9
-201015-23:32:23,204 nipype.workflow INFO:
-	 [Job 9] Completed (psb6351_wf.datasink).
+201119-22:13:00,165 nipype.workflow INFO:
+	 Finished submitting: psb6351_wf.datasink ID: 18
+201119-22:13:03,863 nipype.workflow INFO:
+	 [Job 18] Completed (psb6351_wf.datasink).

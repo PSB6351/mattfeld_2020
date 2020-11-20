@@ -45,6 +45,7 @@ import json
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
+import nipype.algorithms.rapidart as rapidart
 
 # Below I am assigning a list with one string element to the variable named sid
 # I do this because I want to iterate over subject ids (aka., sids) and I want
@@ -241,8 +242,6 @@ motion_correct =  pe.MapNode(fsl.MCFLIRT(save_mats = True,
                              iterfield = ['in_file'])
 motion_correct.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', motion_correct, 'ref_file')
-psb6351_wf.connect(motion_correct, 'par_file', outputnode, 'motion_parameters')
-psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
 
 ###############################
 # ADD RAPIDART DETECTION HERE #
@@ -250,9 +249,20 @@ psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
 # Evaluate the number of outliers that are detected
 # when using zintensity_thresholds of 1, 2, 3, 4
 # and when using norm_threshold of 2, 1, 0.5, 0.2
-###############################
-
-
+###############################  
+###### Using the RAPIDART function from Nypipe algorithm 
+rapidart_detect = pe.MapNode(rapidart.ArtifactDetect(),
+                             iterfield = ['realigned_files', 'realignment_parameters'],
+                             name = 'rapidart_detect')
+rapidart_detect.inputs.parameter_source = 'FSL'
+rapidart_detect.inputs.mask_type = 'spm_global'
+rapidart_detect.inputs.norm_threshold =  0.5
+rapidart_detect.inputs.zintensity_threshold = 2.0
+rapidart_detect.inputs.global_threshold = 10.0
+rapidart_detect.inputs.use_differences = [True, True]
+rapidart_detect.inputs.use_norm = True
+psb6351_wf.connect(motion_correct, 'par_file', rapidart_detect, 'realignment_parameters')
+psb6351_wf.connect(motion_correct, 'out_file', rapidart_detect, 'realigned_files')
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
@@ -260,14 +270,15 @@ psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
 # as a list of lists. I'm using a MapNode to iterate over the two.
 # this should allow me to parallelize this on the HPC
 tshifter = pe.MapNode(afni.TShift(),
-                      iterfield=['in_file','slice_timing'],
+                     iterfield=['in_file','slice_timing'],
                       name = 'tshifter')
 tshifter.inputs.tr = '1.76'
 tshifter.inputs.slice_timing = slice_timing_list
 tshifter.inputs.interp = 'Fourier'
 tshifter.inputs.rltplus = True
 tshifter.inputs.outputtype = 'NIFTI_GZ'
-psb6351_wf.connect(volreg, 'out_file', tshifter, 'in_file')
+##psb6351_wf.connect(volreg, 'out_file', tshifter, 'in_file')
+psb6351_wf.connect(motion_correct, 'out_file', tshifter, 'in_file')
 
 # Calculate the transformation matrix from EPI space to FreeSurfer space
 # using the BBRegister command
@@ -289,6 +300,15 @@ sp_blur.inputs.fwhm = 2.5
 sp_blur.inputs.automask = True
 sp_blur.inputs.outputtype = 'NIFTI_GZ'
 psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
+
+#### Temporal Smoothing 
+tmp_smooth = pe.MapNode(afni.TSmooth(),
+                        iterfield=['in_file'],
+                        name = 'tmp_smooth')
+tmp_smooth.inputs.adaptive = 5
+tmp_smooth.inputs.lin = True
+tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
 
 # Register a source file to fs space and create a brain mask in source space
 # The node below creates the Freesurfer source
@@ -368,6 +388,11 @@ psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 #psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
 psb6351_wf.connect(motion_correct, 'par_file', datasink, 'motion.@motion_parameters')
 psb6351_wf.connect(motion_correct, 'out_file', datasink, 'motion.@realigned_files')
+psb6351_wf.connect(rapidart_detect,'displacement_files', datasink, 'rapidart.@displacement')
+psb6351_wf.connect(rapidart_detect,'intensity_files', datasink, 'rapidart.@intensity')
+psb6351_wf.connect(rapidart_detect,'norm_files', datasink, 'rapidart.@norm')
+psb6351_wf.connect(rapidart_detect,'outlier_files', datasink, 'rapidart.@outlier')
+psb6351_wf.connect(rapidart_detect,'statistic_files', datasink, 'rapidart.@stats')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
