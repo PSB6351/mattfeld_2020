@@ -1,1 +1,2 @@
-*+ WARNING: '-stim_times 2' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+** FATAL ERROR: '-stim_times_AM1 1' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/loc_face_evs.1D' doesn't have any auxiliary values per time point! [nopt=16] :-(
+ ==> You need at least 1 extra value 'married' to each stimulus start time
