@@ -17,13 +17,8 @@
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-<<<<<<< HEAD
 #SBATCH -o /scratch/bsuth005/crash/preproc_o
 #SBATCH -e /scratch/bsuth005/crash/preproc_e
-=======
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_e
->>>>>>> 7c5358830a1ed5868e92d0544fd7d724cfee9174
 
 # The following commands are specific to python programming.
 # Tools that you'll need for your code must be imported.  
@@ -50,6 +45,7 @@ import json
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe 
 import nipype.interfaces.utility as util
+import nipype.algorithms.rapidart as rapidart
 
 # Below I am assigning a list with one string element to the variable named sid
 # I do this because I want to iterate over subject ids (aka., sids) and I want 
@@ -66,16 +62,14 @@ sids = ['021']
 # relevant for linux and osx operating systems....windows uses something different '\\'
 # I am also using f string formatting to insert the first element of the 
 # sids list variable into the string.
-<<<<<<< HEAD
+
 base_dir = '/home/bsuth005/psb6351_github/mattfeld_2020'
 work_dir = '/scratch/bsuth005'
-=======
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351/ATM'
->>>>>>> 7c5358830a1ed5868e92d0544fd7d724cfee9174
+
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
+motion_dir = os.path.join(base_dir, f'derivative/preproc/sub-{sids[0]}/motion')
 
 # Get a list of my study task json and nifti converted files
 # I am using the glob function from glob that take a string as input
@@ -91,6 +85,8 @@ fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
 func_json = sorted(glob(func_dir + '/*.json'))
 func_files = sorted(glob(func_dir + '/*.nii.gz'))
 fmap_files = sorted(glob(fmap_dir + '/*func*.nii.gz'))
+motion_files = sorted(glob(motion_dir + '/*.nii.gz'))
+param_files = sorted(glob(motion_dir + '/*.1D'))
 
 # Here I am building a function that eliminates the
 # mapnode directory structure and assists in saving
@@ -227,6 +223,7 @@ extractref.inputs.in_file = func_files[0]
 #extractref.inputs.t_min = int(np.ceil(nb.load(study_func_files[0]).shape[3]/2)) #PICKING MIDDLE
 psb6351_wf.connect(getbestvol, 'best_vol_num', extractref, 't_min')
 
+
 # Below is the command that runs AFNI's 3dvolreg command.
 # this is the node that performs the motion correction
 # I'm iterating over the functional files which I am passing
@@ -240,6 +237,42 @@ volreg.inputs.outputtype = 'NIFTI_GZ'
 volreg.inputs.zpad = 4
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
+
+'''
+# Motion correct functional runs to the reference (1st volume of 1st run)
+motion_correct =  pe.MapNode(fsl.MCFLIRT(save_mats = True,
+                                         save_plots = True,
+                                         interpolation = 'sinc'),
+                             name = 'motion_correct',
+                             iterfield = ['in_file'])
+motion_correct.inputs.in_file = func_files
+psb6351_wf.connect(extractref, 'roi_file', motion_correct, 'ref_file')
+psb6351_wf.connect(motion_correct, 'par_file', outputnode, 'motion_parameters')
+psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
+'''
+
+###############################
+# ADD RAPIDART DETECTION HERE #
+###############################
+# Evaluate the number of outliers that are detected
+# when using zintensity_thresholds of 1, 2, 3, 4
+# and when using norm_threshold of 2, 1, 0.5, 0.2
+###############################
+
+ad = pe.MapNode(rapidart.ArtifactDetect(),
+                iterfield=['realigned_files', 'realignment_parameters'],
+                name = 'ad')
+ad.inputs.mask_type = 'spm_global'
+ad.inputs.norm_threshold = 1.0
+ad.inputs.parameter_source = 'AFNI'
+#ad.inputs.realigned_files = motion_func
+#ad.inputs.realigment_parameters = motion_par
+ad.inputs.zintensity_threshold = 3.0
+ad.inputs.global_threshold = 9.0
+ad.inputs.use_norm = True 
+
+psb6351_wf.connect(volreg, 'out_file', ad, 'realigned_files')
+psb6351_wf.connect(volreg, 'oned_file', ad, 'realignment_parameters')
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
@@ -267,7 +300,6 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 # Add a mapnode to spatially blur the data
 # save the outputs to the datasink
 
-<<<<<<< HEAD
 sp_blur = pe.MapNode(afni.BlurToFWHM(),
                      iterfield=['in_file'],
                      name = 'sp_blur')
@@ -286,7 +318,7 @@ tmp_smooth.inputs.adaptive = 5
 tmp_smooth.inputs.lin = True
 tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
 psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
-=======
+
 # Register a source file to fs space and create a brain mask in source space
 # The node below creates the Freesurfer source
 fssource = pe.Node(nio.FreeSurferSource(),
@@ -347,7 +379,7 @@ smooth.inputs.fwhm=[2.0, 4.0, 6.0, 8.0, 10.0, 12.0]
 psb6351_wf.connect(maskfunc, 'out_file', smooth, 'in_file')
 psb6351_wf.connect(smooth_median, ('out_stat', getbtthresh), smooth, 'brightness_threshold')
 psb6351_wf.connect(smooth_merge, ('out', getusans), smooth, 'usans')
->>>>>>> 7c5358830a1ed5868e92d0544fd7d724cfee9174
+
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -364,6 +396,9 @@ psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+#psb6351_wf.connect(motion_correct, 'par_file', datasink, 'motion.@motion_parameters')
+#psb6351_wf.connect(motion_correct, 'out_file', datasink, 'motion.@realigned_files')
+psb6351_wf.connect(ad, 'outlier_files', datasink, 'artifact_detect')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
