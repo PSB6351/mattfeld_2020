@@ -46,6 +46,7 @@ import json
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe 
 import nipype.interfaces.utility as util
+import nipype.algorithms.rapidart as rapidart
 
 # Below I am assigning a list with one string element to the variable named sid
 # I do this because I want to iterate over subject ids (aka., sids) and I want 
@@ -69,6 +70,7 @@ work_dir = '/scratch/nbrij001/PSB6351'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
+#motion_dir = os.path.join(base_dir, f'derivatives/preproc/sub-{sids[0]}/motion')
 
 # Get a list of my study task json and nifti converted files
 # I am using the glob function from glob that take a string as input
@@ -84,6 +86,8 @@ fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
 func_json = sorted(glob(func_dir + '/*.json'))
 func_files = sorted(glob(func_dir + '/*.nii.gz'))
 fmap_files = sorted(glob(fmap_dir + '/*func*.nii.gz'))
+#motion_func = sorted(glob(motion_dir + '/*.nii.gz'))
+#motion_par = sorted(glob(motion_dir + '/*.1D'))
 
 # Here I am building a function that eliminates the
 # mapnode directory structure and assists in saving
@@ -220,6 +224,7 @@ extractref.inputs.in_file = func_files[0]
 #extractref.inputs.t_min = int(np.ceil(nb.load(study_func_files[0]).shape[3]/2)) #PICKING MIDDLE
 psb6351_wf.connect(getbestvol, 'best_vol_num', extractref, 't_min')
 
+
 # Below is the command that runs AFNI's 3dvolreg command.
 # this is the node that performs the motion correction
 # I'm iterating over the functional files which I am passing
@@ -233,6 +238,43 @@ volreg.inputs.outputtype = 'NIFTI_GZ'
 volreg.inputs.zpad = 4
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
+
+'''
+# Motion correct functional runs to the reference (1st volume of 1st run)
+motion_correct =  pe.MapNode(fsl.MCFLIRT(save_mats = True,
+                                         save_plots = True,
+                                         interpolation = 'sinc'),
+                             name = 'motion_correct',
+                             iterfield = ['in_file'])
+motion_correct.inputs.in_file = func_files
+psb6351_wf.connect(extractref, 'roi_file', motion_correct, 'ref_file')
+psb6351_wf.connect(motion_correct, 'par_file', outputnode, 'motion_parameters')
+psb6351_wf.connect(motion_correct, 'out_file', outputnode, 'realigned_files')
+'''
+
+###############################
+# ADD RAPIDART DETECTION HERE #
+###############################
+# Evaluate the number of outliers that are detected
+# when using zintensity_thresholds of 1, 2, 3, 4
+# and when using norm_threshold of 2, 1, 0.5, 0.2
+###############################
+
+AD = pe.MapNode(rapidart.ArtifactDetect(),
+		iterfield=['realigned_files', 'realignment_parameters'],
+		name = 'AD')
+AD.inputs.mask_type = 'spm_global'
+AD.inputs.norm_threshold = 2.0
+AD.inputs.parameter_source = 'AFNI'
+#AD.inputs.realigned_files = 'motion_func'
+#AD.inputs.realignment_parameters = 'motion_par'
+AD.inputs.zintensity_threshold = 1.0
+AD.inputs.global_threshold = 9.0
+#AD.inputs.use_norm = 'TRUE'
+
+psb6351_wf.connect(volreg, 'out_file', AD, 'realigned_files')
+psb6351_wf.connect(volreg, 'oned_file', AD, 'realignment_parameters')
+
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
@@ -358,6 +400,9 @@ psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+psb6351_wf.connect(AD, 'outlier_files', datasink, 'artifact_detect')
+#psb6351_wf.connect(motion_correct, 'par_file', datasink, 'motion.@motion_parameters')
+#psb6351_wf.connect(motion_correct, 'out_file', datasink, 'motion.@realigned_files')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
