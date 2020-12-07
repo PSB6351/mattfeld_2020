@@ -19,6 +19,7 @@ def infotodict(seqinfo):
     bids_subject_session_prefix: BIDS subject/session prefix
     """
 
+
     t1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
     dwi = create_key('sub-{subject}/dwi/sub-{subject}_run-{item}_dwi')
     loc1_task = create_key('sub-{subject}/func/sub-{subject}_task-loc_run-1_bold')
@@ -72,3 +73,7 @@ def infotodict(seqinfo):
         else:
             pass
     return info
+
+        
+
+  
