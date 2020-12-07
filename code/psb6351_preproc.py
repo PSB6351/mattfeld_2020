@@ -86,40 +86,20 @@ fmap_files = sorted(glob(fmap_dir + '/*func*.nii.gz'))
 motion_func = sorted(glob(motion_dir + '/*.nii.gz'))
 motion_par = sorted(glob(motion_dir + '/*.ID'))
 
-# Here I am building a function that eliminates the
-# mapnode directory structure and assists in saving
-# all of the outputs into a single directory.
-# This is a function because it starts with the word def
-# and then has the functon name followed by paraentheses.
-# The name inside the parentheses is a variable name that represents
-# the input to the function.  In this case I'm providing a variable
-# called func_files.  I will iterate over the length of the func_files
-# variable to append tuples to a list variable called subs that have
-# the ways I want to substitute names later in the datasink.  In this
-# case I am getting ride of those names so that everything is saved
-# in the same directory in the end.
-def get_subs(func_files):
-    '''Produces Name Substitutions for Each Contrast'''
-    subs = []
-    for curr_run in range(len(func_files)):
-        subs.append(('_tshifter%d' %curr_run, ''))
-        subs.append(('_volreg%d' %curr_run, ''))
-        subs.append(('_smooth%d' %curr_run, ''))
-    return subs
-
-def getbtthresh(medianvals):
-    """Get the brightness threshold for SUSAN."""
-    return [0.75*val for val in medianvals]
-
-def getusans(inlist):
-    """Return the usans at the right threshold."""
-    return [[tuple([val[0],0.75*val[1]])] for val in inlist]
-
+#defining functions that get called later
 def get_aparc_aseg(files):
     for name in files:
         if 'aparc+aseg' in name:
             return name
     raise ValueError('aparc+aseg.mgz not found')
+
+def get_subs(func_files):
+    subs = []
+    for curr_run in range(len(func_files)):
+        subs.append(('tshifter%d' %curr_run, ''))
+        subs.append(('_volreg%d' %curr_run, ''))
+    return subs
+
 
 # Here I am building a function that takes in a
 # text file that includes the number of outliers
@@ -174,34 +154,6 @@ id_outliers.inputs.legendre = True
 id_outliers.inputs.polort = 4
 id_outliers.inputs.out_file = 'outlier_file'
 
-'''
-CURRENTLY CRASHING COMMENTING OUT TO WORK ON LATER
-#ATM ONLY: Add an unwarping mapnode here using the field maps
-calc_distor_corr = pe.Node(afni.Qwarp(),
-                           name = 'calc_distor_corr')
-calc_distor_corr.inputs.plusminus = True
-calc_distor_corr.inputs.pblur = [0.05, 0.05]
-calc_distor_corr.inputs.minpatch = 9
-calc_distor_corr.inputs.noweight = True
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-calc_distor_corr.inputs.out_file = 'foobar'
-calc_distor_corr.inputs.in_file = fmap_files[0]
-calc_distor_corr.inputs.base_file = fmap_files[1]
-
-distor_corr = pe.MapNode(afni.NwarpApply(),
-                         iterfield=['in_file'],
-                         name = 'distor_corr')
-distor_corr.inputs.ainterp = 'quintic'
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-distor_corr.inputs.in_file = func_files
-# The line below is the other way that inputs can be provided to a node
-# Rather than hardcoding like above: distor_corr.inputs.ainterp = 'quintic'
-# You pass the output from the previous node...in this case calc_distor_corr
-# it's output is called 'source_warp' and you pass that to this node distor_corr
-# and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
-'''
-
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
 # for the index in the first 201 volumes that has the 
@@ -218,7 +170,6 @@ psb6351_wf.connect(id_outliers, 'out_file', getbestvol, 'outlier_count')
 extractref = pe.Node(fsl.ExtractROI(t_size=1),
                      name = "extractref")
 extractref.inputs.in_file = func_files[0]
-#extractref.inputs.t_min = int(np.ceil(nb.load(study_func_files[0]).shape[3]/2)) #PICKING MIDDLE
 psb6351_wf.connect(getbestvol, 'best_vol_num', extractref, 't_min')
 
 
@@ -236,24 +187,7 @@ volreg.inputs.zpad = 4
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
 
-# Motion correct functional runs to the reference (1st volume of 1st run)
-#motion_correct =  pe.MapNode(fsl.MCFLIRT(save_mats = True,
-#                                         save_plots = True,
-#                                         interpolation = 'sinc'),
-#		  	     name = 'motion_correct',
-#			     iterfield = ['in_file'])
-#motion_correct.inputs.in_file = func_files
-#psb6351_wf.connect(extractref, 'roi_file', motion_correct, 'ref_file')
-#psb6351_wf.connect(motion_correct, 'par_file', motion_correct, 'motion_parameters')
-#psb6351_wf.connect(motion_correct, 'out_file', motion_correct, 'realigned_files')
-
-###############################
-# ADD RAPIDART DETECTION HERE #
-###############################
-# Evaluate the number of outliers that are detected
-# when using zintensity_thresholds of 1, 2, 3, 4
-# and when using norm_threshold of 2, 1, 0.5, 0.2
-###############################
+#outlier detection node with norm threshold of 1, z threshold of 3
 
 artifact_detect = pe.MapNode(base.ArtifactDetect(),
 			     iterfield= ['realigned_files', 'realignment_parameters'],
@@ -262,10 +196,8 @@ artifact_detect.inputs.realigned_files = motion_func
 artifact_detect.inputs.realignment_parameters = motion_par
 artifact_detect.inputs.parameter_source = 'AFNI'
 artifact_detect.inputs.mask_type = 'spm_global'
-artifact_detect.inputs.norm_threshold = 2 #test for 2,1,0.5,0.2
-artifact_detect.inputs.zintensity_threshold = 1 #test for 1,2,3,4
-artifact_detect.inputs.use_differences = [True, False]
-artifact_detect.inputs.use_norm = True
+artifact_detect.inputs.norm_threshold = 1
+artifact_detect.inputs.zintensity_threshold = 3
 
 psb6351_wf.connect(volreg, 'out_file', artifact_detect, 'realigned_files')
 psb6351_wf.connect(volreg, 'oned_file', artifact_detect, 'realignment_parameters')
@@ -294,8 +226,6 @@ fs_register.inputs.subject_id = f'sub-{sids[0]}'
 fs_register.inputs.subjects_dir = fs_dir
 psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
-# Add a mapnode to spatially blur the data
-# save the outputs to the datasink
 
 # Register a source file to fs space and create a brain mask in source space
 # The node below creates the Freesurfer source
@@ -328,35 +258,15 @@ maskfunc = pe.MapNode(fsl.ImageMaths(suffix='_bet',
 psb6351_wf.connect(tshifter, 'out_file', maskfunc, 'in_file')
 psb6351_wf.connect(fs_voltransform, 'transformed_file', maskfunc, 'in_file2')
 
-# Smooth each run using SUSAn with the brightness threshold set to 75%
-# of the median value for each run and a mask constituting the mean functional
-smooth_median = pe.MapNode(fsl.ImageStats(op_string='-k %s -p 50'),
-                           iterfield = ['in_file'],
-                           name='smooth_median')
-psb6351_wf.connect(maskfunc, 'out_file', smooth_median, 'in_file')
-psb6351_wf.connect(fs_voltransform, 'transformed_file', smooth_median, 'mask_file')
+#spatial smoothing with fwhm of 4 and automask
+blur = pe.MapNode(afni.BlurToFWHM(),
+			iterfield=['in_file'],
+			name='blur')
+blur.inputs.fwhm = 4.0
+blur.inputs.outputtype = 'NIFTI_GZ'
+blur.inputs.automask = True
+psb6351_wf.connect(maskfunc, 'out_file', blur, 'in_file')
 
-# Calculate the mean functional
-smooth_meanfunc = pe.MapNode(fsl.ImageMaths(op_string='-Tmean',
-                                            suffix='_mean'),
-                             iterfield=['in_file'],
-                             name='smooth_meanfunc')
-psb6351_wf.connect(maskfunc, 'out_file', smooth_meanfunc, 'in_file')
-
-smooth_merge = pe.Node(util.Merge(2, axis='hstack'),
-                       name='smooth_merge')
-psb6351_wf.connect(smooth_meanfunc, 'out_file', smooth_merge, 'in1')
-psb6351_wf.connect(smooth_median, 'out_stat', smooth_merge, 'in2')
-
-# Below is the code for smoothing using the susan algorithm from FSL that
-# limits smoothing based on different tissue classes
-smooth = pe.MapNode(fsl.SUSAN(),
-                    iterfield=['in_file', 'brightness_threshold', 'usans', 'fwhm'],
-                    name='smooth')
-smooth.inputs.fwhm=[2.0, 4.0, 6.0, 8.0, 10.0, 12.0]
-psb6351_wf.connect(maskfunc, 'out_file', smooth, 'in_file')
-psb6351_wf.connect(smooth_median, ('out_stat', getbtthresh), smooth, 'brightness_threshold')
-psb6351_wf.connect(smooth_merge, ('out', getusans), smooth, 'usans')
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -367,17 +277,14 @@ datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-#psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
-#psb6351_wf.connect(motion_correct, 'par_file', datasink, 'motion.@motion_parameters')
-#psb6351_wf.connect(motion_correct, 'out_file', datasink, 'motion.@realigned_files')
 psb6351_wf.connect(artifact_detect, 'outlier_files', datasink, 'outliers')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
-psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
+psb6351_wf.connect(blur, 'out_file', datasink, 'spatial_smooth')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 
 # The following two lines set a work directory outside of my 
