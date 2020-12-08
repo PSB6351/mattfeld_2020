@@ -1,2 +1,44 @@
-** FATAL ERROR: '-stim_times_AM1 1' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/loc_face_evs.1D' doesn't have any auxiliary values per time point! [nopt=16] :-(
- ==> You need at least 1 extra value 'married' to each stimulus start time
+*+ WARNING: '-stim_times 1' didn't read any good times from file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/fix_b4_c_cond_evs.1D'
+*+ WARNING: '-stim_times 2' didn't read any good times from file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/fix_b4_ic_cond_evs.1D'
+*+ WARNING: '-stim_times 3' didn't read any good times from file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/events_remain_evs.1D'
+*+ WARNING: '-stim_times 4' didn't read any good times from file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/facefix_b4_bl_evs.1D'
+*+ WARNING: '-stim_times 5' didn't read any good times from file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/scenefix_b4_bl_evs.1D'
+*+ WARNING: '-stim_times 1' (LOCAL) run#1 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 1' (LOCAL) run#2 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 1' (LOCAL) run#3 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 1' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: !! '-stim_times 1' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/fix_b4_c_cond_evs.1D' has no good stimulus time values
+*+ WARNING: '-stim_times 2' (LOCAL) run#1 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 2' (LOCAL) run#2 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 2' (LOCAL) run#3 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 2' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: !! '-stim_times 2' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/fix_b4_ic_cond_evs.1D' has no good stimulus time values
+*+ WARNING: '-stim_times 3' (LOCAL) run#1 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 3' (LOCAL) run#2 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 3' (LOCAL) run#3 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 3' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: !! '-stim_times 3' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/events_remain_evs.1D' has no good stimulus time values
+*+ WARNING: '-stim_times 4' (LOCAL) run#1 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 4' (LOCAL) run#2 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 4' (LOCAL) run#3 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 4' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: !! '-stim_times 4' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/facefix_b4_bl_evs.1D' has no good stimulus time values
+*+ WARNING: '-stim_times 5' (LOCAL) run#1 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 5' (LOCAL) run#2 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 5' (LOCAL) run#3 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: '-stim_times 5' (LOCAL) run#4 has 1 times outside range 0 .. 623.04 [PSFB syndrome]
+*+ WARNING: !! '-stim_times 5' file '/home/hlee053/Documents/mattfeld_2020/derivatives/first_lvl/sub-021/evs/scenefix_b4_bl_evs.1D' has no good stimulus time values
+*+ WARNING: -------------------------------------------------
+*+ WARNING: Problems with the X matrix columns, listed below:
+*+ WARNING: !! * Column 24 [fx_b4_c_cond#0] is all zeros
+*+ WARNING: !! * Column 25 [fx_b4_ic_cond#0] is all zeros
+*+ WARNING: !! * Column 26 [all_remain#0] is all zeros
+*+ WARNING: !! * Column 27 [facefx_b4_bl#0] is all zeros
+*+ WARNING: !! * Column 28 [scenefx_b4_bl#0] is all zeros
+*+ WARNING: -------------------------------------------------
+*+ WARNING: !! in Signal+Baseline matrix:
+ * Largest singular value=1.98029
+ * 5 singular values are less than cutoff=1.98029e-07
+ * Implies strong collinearity in the matrix columns! 
+** ERROR: ----- !! Signal-only matrix condition:  UNDEFINED ** VERY BAD **
+*+ WARNING: +++++ !! Matrix inverse average error = 0.00408163  ** BEWARE **
