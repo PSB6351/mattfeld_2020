@@ -1,9 +1,11 @@
 import os
 
+
 def create_key(template, outtype=('nii.gz',), annotation_classes=None):
     if template is None or not template:
         raise ValueError('Template must be a valid format string')
     return template, outtype, annotation_classes
+
 
 def infotodict(seqinfo):
     """Heuristic evaluator for determining which runs belong where
@@ -14,9 +16,6 @@ def infotodict(seqinfo):
     subject: participant id
     seqitem: run number during scanning
     subindex: sub index within group
-    session: ses-[sessionID]
-    bids_subject_session_dir: BIDS subject/session directory
-    bids_subject_session_prefix: BIDS subject/session prefix
     """
 
     t1w = create_key('sub-{subject}/anat/sub-{subject}_run-{item}_T1w')
@@ -27,20 +26,20 @@ def infotodict(seqinfo):
     study2_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-2_bold')
     study3_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-3_bold')
     study4_task = create_key('sub-{subject}/func/sub-{subject}_task-study_run-4_bold')
-    task_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-func_dir-{dir}_run{item}_epi')
-    dwi_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi_dir-{dir}_run{item}_epi')
-
-    info = {t1w : [],
-            dwi : [],
-            loc1_task : [],
-            loc2_task : [],
-            study1_task : [],
-            study2_task : [],
-            study3_task : [],
-            study4_task : [],
-            task_fmap : [],
-            dwi_fmap : []}
-
+    task_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-func_dir-{dir}_run-{item}_epi')
+    dwi_fmap = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi_dir-{dir}_run-{item}_epi')
+    
+    info = {t1w: [], 
+            dwi: [], 
+            loc1_task: [], 
+            loc2_task: [], 
+            study1_task: [], 
+            study2_task: [], 
+            study3_task: [], 
+            study4_task:[], 
+            task_fmap: [], 
+            dwi_fmap: []}
+    
     for s in seqinfo:
         xdim, ydim, slice_num, timepoints = (s[6], s[7], s[8], s[9])
         if (slice_num == 176) and (timepoints == 1) and ("T1w_MPR_vNav" in s.series_description):
@@ -72,3 +71,4 @@ def infotodict(seqinfo):
         else:
             pass
     return info
+
