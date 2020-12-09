@@ -45,6 +45,7 @@ import json
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
+import nipype.algorithms.rapidart as rapidart
 
 # Below I am assigning a list with one string element to the variable named sid
 # I do this because I want to iterate over subject ids (aka., sids) and I want
@@ -170,33 +171,6 @@ id_outliers.inputs.legendre = True
 id_outliers.inputs.polort = 4
 id_outliers.inputs.out_file = 'outlier_file'
 
-'''
-CURRENTLY CRASHING COMMENTING OUT TO WORK ON LATER
-#ATM ONLY: Add an unwarping mapnode here using the field maps
-'''calc_distor_corr = pe.Node(afni.Qwarp(),
-                           name = 'calc_distor_corr')
-calc_distor_corr.inputs.plusminus = True
-calc_distor_corr.inputs.pblur = [0.05, 0.05]
-calc_distor_corr.inputs.minpatch = 9
-calc_distor_corr.inputs.noweight = True
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-calc_distor_corr.inputs.out_file = 'foobar'
-calc_distor_corr.inputs.in_file = fmap_files[0]
-calc_distor_corr.inputs.base_file = fmap_files[1]
-
-distor_corr = pe.MapNode(afni.NwarpApply(),
-                         iterfield=['in_file'],
-                         name = 'distor_corr')
-distor_corr.inputs.ainterp = 'quintic'
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-distor_corr.inputs.in_file = func_files'''
-# The line below is the other way that inputs can be provided to a node
-# Rather than hardcoding like above: distor_corr.inputs.ainterp = 'quintic'
-# You pass the output from the previous node...in this case calc_distor_corr
-# it's output is called 'source_warp' and you pass that to this node distor_corr
-# and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
-'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
@@ -210,7 +184,7 @@ getbestvol = pe.Node(Function(input_names=['outlier_count'],
 psb6351_wf.connect(id_outliers, 'out_file', getbestvol, 'outlier_count')
 
 # Extract the earliest volume with the
-# the fewest outliers of the first run as the reference
+# fewest outliers of the first run as the reference
 extractref = pe.Node(fsl.ExtractROI(t_size=1),
                      name = "extractref")
 extractref.inputs.in_file = func_files[0]
@@ -230,6 +204,27 @@ volreg.inputs.outputtype = 'NIFTI_GZ'
 volreg.inputs.zpad = 4
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
+
+'''
+McFlirt motion correct
+'''
+
+# Below is the command that runs RAPIDART detection
+# This is the node that captures outliers in motion and intensity
+# Using zintensity thresholds of 1, 2, 3, or 4
+# And when using norm_threshold of 2, 1, 0.5, or 0.2
+rapidart_detect = pe. MapNode(rapidart.ArtifactDetect(),
+                              iterfield = ['realigned_files', 'realignment_parameters'],
+                              name = 'rapidart_detect')
+rapidart_detect.inputs.parameter_source = 'AFNI'
+rapidart_detect.inputs.mask_type = 'spm_global'
+rapidart_detect.inputs.norm_threshold = 1.0 #Based on nipype guidelines
+rapidart_detect.inputs.zintensity_threshold = 3.0 #Based on nipype guidelines
+rapidart_detect.inputs.global_threshold = 10.0
+rapidart_detect.inputs.use_differences = [True, False]
+rapidart_detect.inputs.use_norm = True
+psb6351_wf.connect(volreg, 'out_file', rapidart_detect, 'realigned_files')
+psb6351_wf.connect(volreg, 'oned_file', rapidart_detect, 'realignment_parameters')
 
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
@@ -265,16 +260,13 @@ sp_blur.inputs.outputtype = 'NIFTI_GZ'
 psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
 
 # Temporal smoothing
-# tmp_smooth = pe.MapNode(afni.TSmooth(),
-# 		iterfield=['in_file'],
-#		name= 'imp_smooth')
-# tmp_smooth.inputs
-# p_blur.inputs.fwhm = 6.0 #size of blurring (in mm)
-# sp_blur.inputs.automask = True
-# sp_blur.inputs.num_threads = 1 #1 default
-# sp_blur.inputs.outputtype = 'NIFTI_GZ'
-# sp_blur.inputs.out_file = 'sp_blur_4mm_1th'
-# psb6351_wf.connect(tshifter, 'out_file', tmp_smooth, 'in_file')
+tmp_smooth = pe.MapNode(afni.TSmooth(),
+            iterfield=['in_file'],
+            name= 'tmp_smooth')
+tmp_smooth.inputs.adaptive = 5
+tmp_smooth.inputs.lin = True
+tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
 
 # Register a source file to fs space and create a brain mask in source space
 # The node below creates the Freesurfer source
@@ -307,6 +299,7 @@ maskfunc = pe.MapNode(fsl.ImageMaths(suffix='_bet',
 psb6351_wf.connect(tshifter, 'out_file', maskfunc, 'in_file')
 psb6351_wf.connect(fs_voltransform, 'transformed_file', maskfunc, 'in_file2')
 
+'''
 # Smooth each run using SUSAn with the brightness threshold set to 75%
 # of the median value for each run and a mask constituting the mean functional
 smooth_median = pe.MapNode(fsl.ImageStats(op_string='-k %s -p 50'),
@@ -336,6 +329,7 @@ smooth.inputs.fwhm=[2.0, 4.0, 6.0, 8.0, 10.0, 12.0]
 psb6351_wf.connect(maskfunc, 'out_file', smooth, 'in_file')
 psb6351_wf.connect(smooth_median, ('out_stat', getbtthresh), smooth, 'brightness_threshold')
 psb6351_wf.connect(smooth_merge, ('out', getusans), smooth, 'usans')
+'''
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -346,15 +340,17 @@ datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
 psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_smoothing')
+psb6351_wf.connect(tmp_smooth, 'out_file', datasink, 'temporal_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
 # psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+psb6351_wf.connect(rapidart_detect, 'outlier_files', datasink, 'artifact_detect')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
-psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
+# psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 
 # The following two lines set a work directory outside of my
