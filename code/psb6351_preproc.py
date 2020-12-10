@@ -8,7 +8,7 @@
 # The lines below set up important parameters for the slurm scheduling system
 # The first line tells the slurm scheduler which partition to send the job to
 # The next two lines tells which account to use.
-# The last two lines with the -o and -e flags tell where to write out the 
+# The last two lines with the -o and -e flags tell where to write out the
 # error and output text files.  These are useful when debugging code.  They
 # Are simple text files that cat be viewed with the commands cat or less.
 # The directory where these files are written must be created before otherwise
@@ -17,11 +17,11 @@
 #SBATCH --partition centos7_default-partition
 #SBATCH --account acc_psb6351
 #SBATCH --qos pq_psb6351
-#SBATCH -o /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_o
-#SBATCH -e /scratch/madlab/Mattfeld_PSB6351/ATM/crash/preproc_e
+#SBATCH -o /scratch/kcrooks/crash/preproc_o
+#SBATCH -e /scratch/kcrooks/crash/preproc_e
 
 # The following commands are specific to python programming.
-# Tools that you'll need for your code must be imported.  
+# Tools that you'll need for your code must be imported.
 # You can import modules directly without renaming them (e.g., import os)
 # Or you can import and rename things (e.g., import pandas as pd)
 # Or you can import specific features of a module (e.g., from nipype.interfaces.utility import Function)
@@ -43,39 +43,40 @@ from nipype.interfaces.utility import Function
 import nibabel as nb
 import json
 import nipype.interfaces.io as nio
-import nipype.pipeline.engine as pe 
+import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
+import nipype.algorithms.rapidart as rapidart
 
 # Below I am assigning a list with one string element to the variable named sid
-# I do this because I want to iterate over subject ids (aka., sids) and I want 
+# I do this because I want to iterate over subject ids (aka., sids) and I want
 # to treat 021 as a whole and not as separate parts of the string which is
 # also iterable. I know this is a list because of the [] brackets
 sids = ['021']
 
 # Below I set up some important directories for getting data and writing
-# files that I won't need in the end. I use the os command path.join to 
+# files that I won't need in the end. I use the os command path.join to
 # combine different string elements into a path strcuture that will work
-# across operating systems.  The below is only quasi correct because in the last 
-# string element of both thte func_dir and fmap_dir variables I indicate
-# directory structures with the '/' string.  This forward slash is only 
+# across operating systems.  The below is only quasi correct because in the last
+# string element of both the func_dir and fmap_dir variables I indicate
+# directory structures with the '/' string.  This forward slash is only
 # relevant for linux and osx operating systems....windows uses something different '\\'
-# I am also using f string formatting to insert the first element of the 
+# I am also using f string formatting to insert the first element of the
 # sids list variable into the string.
-base_dir = '/home/data/madlab/Mattfeld_PSB6351/mattfeld_2020'
-work_dir = '/scratch/madlab/Mattfeld_PSB6351/ATM'
+base_dir = '/home/kcroo010/mattfeld_2020'
+work_dir = '/scratch/kcrooks'
 func_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/func')
 fmap_dir = os.path.join(base_dir, f'dset/sub-{sids[0]}/fmap')
 fs_dir = os.path.join(base_dir, 'derivatives', 'freesurfer')
 
 # Get a list of my study task json and nifti converted files
 # I am using the glob function from glob that take a string as input
-# That string can contain wildcards to grab multiple files that meet 
+# That string can contain wildcards to grab multiple files that meet
 # the string completion.  I also, use the function sorted to order them
 # so that the func_files and fmap_files are in the same order based on
 # alphanumeric numbering criteria.  This is important when I get
 # specific elements from a .json file for a func file to preprocess.
 # Be careful!!!!  glob will return an empty list if your wildcard
-# string completion comes up empty rather than crash.  Make sure you 
+# string completion comes up empty rather than crash.  Make sure you
 # have no typos.
 # I plan to replace these lines with a nipype datagrabber soon.
 func_json = sorted(glob(func_dir + '/*.json'))
@@ -120,7 +121,7 @@ def get_aparc_aseg(files):
 # Here I am building a function that takes in a
 # text file that includes the number of outliers
 # at each volume and then finds which volume (e.g., index)
-# has the minimum number of outliers (e.g., min) 
+# has the minimum number of outliers (e.g., min)
 # searching over the first 201 volumes
 # If the index function returns a list because there were
 # multiple volumes with the same outlier count, pick the first one
@@ -134,14 +135,14 @@ def best_vol(outlier_count):
 slice_timing_list = [] # Here I define an empty list variable
 for curr_json in func_json: # Here I am iterating over the variable func_json that was deefined above through the sorted glob
     curr_json_data = open(curr_json) # I need to open the json file
-    curr_func_metadata = json.load(curr_json_data) # THen I need to load the json file
+    curr_func_metadata = json.load(curr_json_data) # Then I need to load the json file
     slice_timing_list.append(curr_func_metadata['SliceTiming'])
 
 # Here I am establishing a nipype work flow that I will eventually execute
 # Code here become less python specific and more nipype specific.  They share similarites
 # but have some unique pecularities to take note.
 psb6351_wf = pe.Workflow(name='psb6351_wf') # First I create a workflow...this will serve as the backbone of the pipeline
-psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sids[0]}' # I deinfe the working directory where I want preliminary files to be written
+psb6351_wf.base_dir = work_dir + f'/psb6351workdir/sub-{sids[0]}' # I define the working directory where I want preliminary files to be written
 psb6351_wf.config['execution']['use_relative_paths'] = True # I assign a execution variable to use relative paths...TRYING TO USE THIS TO FIX A BUG?
 
 # Create a Function node to substitute names of files created during pipeline
@@ -158,7 +159,7 @@ getsubs = pe.Node(Function(input_names=['func_files'],
 getsubs.inputs.func_files = func_files
 
 # Here I am inputing just the first run functional data
-# I want to use afni's 3dToutcount to find the number of 
+# I want to use afni's 3dToutcount to find the number of
 # outliers at each volume.  I will use this information to
 # later select the earliest volume with the least number of outliers
 # to serve as the base for the motion correction
@@ -170,39 +171,12 @@ id_outliers.inputs.legendre = True
 id_outliers.inputs.polort = 4
 id_outliers.inputs.out_file = 'outlier_file'
 
-'''
-CURRENTLY CRASHING COMMENTING OUT TO WORK ON LATER
-#ATM ONLY: Add an unwarping mapnode here using the field maps
-calc_distor_corr = pe.Node(afni.Qwarp(),
-                           name = 'calc_distor_corr')
-calc_distor_corr.inputs.plusminus = True
-calc_distor_corr.inputs.pblur = [0.05, 0.05]
-calc_distor_corr.inputs.minpatch = 9
-calc_distor_corr.inputs.noweight = True
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-calc_distor_corr.inputs.out_file = 'foobar'
-calc_distor_corr.inputs.in_file = fmap_files[0]
-calc_distor_corr.inputs.base_file = fmap_files[1]
-
-distor_corr = pe.MapNode(afni.NwarpApply(),
-                         iterfield=['in_file'],
-                         name = 'distor_corr')
-distor_corr.inputs.ainterp = 'quintic'
-calc_distor_corr.inputs.outputtype = 'NIFTI_GZ'
-distor_corr.inputs.in_file = func_files
-# The line below is the other way that inputs can be provided to a node
-# Rather than hardcoding like above: distor_corr.inputs.ainterp = 'quintic'
-# You pass the output from the previous node...in this case calc_distor_corr
-# it's output is called 'source_warp' and you pass that to this node distor_corr
-# and the relevant input here 'warp'
-psb6351_wf.connect(calc_distor_corr, 'source_warp', distor_corr, 'warp')
-'''
 
 # Create a Function node to identify the best volume based
 # on the number of outliers at each volume. I'm searching
-# for the index in the first 201 volumes that has the 
+# for the index in the first 201 volumes that has the
 # minimum number of outliers and will use the min() function
-# I will use the index function to get the best vol. 
+# I will use the index function to get the best vol.
 getbestvol = pe.Node(Function(input_names=['outlier_count'],
                               output_names=['best_vol_num'],
                               function=best_vol),
@@ -210,7 +184,7 @@ getbestvol = pe.Node(Function(input_names=['outlier_count'],
 psb6351_wf.connect(id_outliers, 'out_file', getbestvol, 'outlier_count')
 
 # Extract the earliest volume with the
-# the fewest outliers of the first run as the reference 
+# fewest outliers of the first run as the reference
 extractref = pe.Node(fsl.ExtractROI(t_size=1),
                      name = "extractref")
 extractref.inputs.in_file = func_files[0]
@@ -231,9 +205,30 @@ volreg.inputs.zpad = 4
 volreg.inputs.in_file = func_files
 psb6351_wf.connect(extractref, 'roi_file', volreg, 'basefile')
 
+'''
+McFlirt motion correct
+'''
+
+# Below is the command that runs RAPIDART detection
+# This is the node that captures outliers in motion and intensity
+# Using zintensity thresholds of 1, 2, 3, or 4
+# And when using norm_threshold of 2, 1, 0.5, or 0.2
+rapidart_detect = pe. MapNode(rapidart.ArtifactDetect(),
+                              iterfield = ['realigned_files', 'realignment_parameters'],
+                              name = 'rapidart_detect')
+rapidart_detect.inputs.parameter_source = 'AFNI'
+rapidart_detect.inputs.mask_type = 'spm_global'
+rapidart_detect.inputs.norm_threshold = 1.0 #Based on nipype guidelines
+rapidart_detect.inputs.zintensity_threshold = 3.0 #Based on nipype guidelines
+rapidart_detect.inputs.global_threshold = 10.0
+rapidart_detect.inputs.use_differences = [True, False]
+rapidart_detect.inputs.use_norm = True
+psb6351_wf.connect(volreg, 'out_file', rapidart_detect, 'realigned_files')
+psb6351_wf.connect(volreg, 'oned_file', rapidart_detect, 'realignment_parameters')
+
 # Below is the command that runs AFNI's 3dTshift command
 # this is the node that performs the slice timing correction
-# I input the study func files as a list and the slice timing 
+# I input the study func files as a list and the slice timing
 # as a list of lists. I'm using a MapNode to iterate over the two.
 # this should allow me to parallelize this on the HPC
 tshifter = pe.MapNode(afni.TShift(),
@@ -256,6 +251,22 @@ psb6351_wf.connect(extractref, 'roi_file', fs_register, 'source_file')
 
 # Add a mapnode to spatially blur the data
 # save the outputs to the datasink
+sp_blur = pe.MapNode(afni.BlurToFWHM(), iterfield=['in_file'], name= 'sp_blur')
+sp_blur.inputs.fwhm = 2.5 #size of blurring (in mm); Some schools of thought - 3x voxel size, 6 for single subject (credit Donisha), AFNI for 4, 2-2.5x voxel (Aaron)
+sp_blur.inputs.automask = True
+sp_blur.inputs.num_threads = 1 #1 default, try not to go over 4
+sp_blur.inputs.outputtype = 'NIFTI_GZ'
+#sp_blur.inputs.out_file = 'sp_blur_4mm_1th'
+psb6351_wf.connect(tshifter, 'out_file', sp_blur, 'in_file')
+
+# Temporal smoothing
+tmp_smooth = pe.MapNode(afni.TSmooth(),
+            iterfield=['in_file'],
+            name= 'tmp_smooth')
+tmp_smooth.inputs.adaptive = 5
+tmp_smooth.inputs.lin = True
+tmp_smooth.inputs.outputtype = 'NIFTI_GZ'
+psb6351_wf.connect(sp_blur, 'out_file', tmp_smooth, 'in_file')
 
 # Register a source file to fs space and create a brain mask in source space
 # The node below creates the Freesurfer source
@@ -288,6 +299,7 @@ maskfunc = pe.MapNode(fsl.ImageMaths(suffix='_bet',
 psb6351_wf.connect(tshifter, 'out_file', maskfunc, 'in_file')
 psb6351_wf.connect(fs_voltransform, 'transformed_file', maskfunc, 'in_file2')
 
+'''
 # Smooth each run using SUSAn with the brightness threshold set to 75%
 # of the median value for each run and a mask constituting the mean functional
 smooth_median = pe.MapNode(fsl.ImageStats(op_string='-k %s -p 50'),
@@ -317,6 +329,7 @@ smooth.inputs.fwhm=[2.0, 4.0, 6.0, 8.0, 10.0, 12.0]
 psb6351_wf.connect(maskfunc, 'out_file', smooth, 'in_file')
 psb6351_wf.connect(smooth_median, ('out_stat', getbtthresh), smooth, 'brightness_threshold')
 psb6351_wf.connect(smooth_merge, ('out', getusans), smooth, 'usans')
+'''
 
 # Below is the node that collects all the data and saves
 # the outputs that I am interested in. Here in this node
@@ -326,20 +339,22 @@ datasink = pe.Node(nio.DataSink(), name="datasink")
 datasink.inputs.base_directory = os.path.join(base_dir, 'derivatives/preproc')
 datasink.inputs.container = f'sub-{sids[0]}'
 psb6351_wf.connect(tshifter, 'out_file', datasink, 'sltime_corr')
+psb6351_wf.connect(sp_blur, 'out_file', datasink, 'spatial_smoothing')
+psb6351_wf.connect(tmp_smooth, 'out_file', datasink, 'temporal_smoothing')
 psb6351_wf.connect(extractref, 'roi_file', datasink, 'study_ref')
-#psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
+# psb6351_wf.connect(calc_distor_corr, 'source_warp', datasink, 'distortion')
 psb6351_wf.connect(volreg, 'out_file', datasink, 'motion.@corrfile')
 psb6351_wf.connect(volreg, 'oned_matrix_save', datasink, 'motion.@matrix')
 psb6351_wf.connect(volreg, 'oned_file', datasink, 'motion.@par')
+psb6351_wf.connect(rapidart_detect, 'outlier_files', datasink, 'artifact_detect')
 psb6351_wf.connect(fs_register, 'out_reg_file', datasink, 'register.@reg_file')
 psb6351_wf.connect(fs_register, 'min_cost_file', datasink, 'register.@reg_cost')
 psb6351_wf.connect(fs_register, 'out_fsl_file', datasink, 'register.@reg_fsl_file')
-psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
+# psb6351_wf.connect(smooth, 'smoothed_file', datasink, 'funcsmoothed')
 psb6351_wf.connect(getsubs, 'subs', datasink, 'substitutions')
 
-# The following two lines set a work directory outside of my 
+# The following two lines set a work directory outside of my
 # local git repo and runs the workflow
 psb6351_wf.run(plugin='SLURM',
-               plugin_args={'sbatch_args': ('--partition centos7_default-partition --qos pq_psb6351 --account acc_psb6351'),
+               plugin_args={'sbatch_args': ('--partition centos7_IB_44C_512G --qos pq_psb6351 --account acc_psb6351'),
                             'overwrite':True})
-
